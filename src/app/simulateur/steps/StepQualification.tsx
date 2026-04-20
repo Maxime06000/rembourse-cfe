@@ -13,8 +13,7 @@ export function StepQualification() {
 
   const [anneeDebut, setAnneeDebut] = useState<number>(ANNEE_COURANTE - 3)
   const [anneeCfe, setAnneeCfe] = useState<number>(2024)
-  const [typeLocation, setTypeLocation] = useState<'longue' | 'courte'>('longue')
-  const [paraHotellerie, setParaHotellerie] = useState<boolean>(false)
+  const [typeLocation, setTypeLocation] = useState<'longue' | 'courte' | 'courte_para'>('longue')
   const [regime, setRegime] = useState<'reel' | 'micro'>('reel')
   const [caAnneeN2, setCaAnneeN2] = useState<string>('')
   const [erreur, setErreur] = useState<string | null>(null)
@@ -23,11 +22,16 @@ export function StepQualification() {
     e.preventDefault()
     const ca = parseFloat(caAnneeN2.replace(',', '.')) || 0
 
+    if (typeLocation === 'courte_para') {
+      setErreur(MESSAGES_ECHEC['para_hotellerie'])
+      return
+    }
+
     const filtre = verifierFiltres({
       anneeDebut,
       anneeCfe,
       caAnneeN2: ca,
-      paraHotellerie,
+      paraHotellerie: false,
       ligne9Oui: false,
     })
 
@@ -37,7 +41,8 @@ export function StepQualification() {
     }
 
     setErreur(null)
-    setQualification({ anneeDebut, anneeCfe, typeLocation, paraHotellerie, regime, caAnneeN2: ca })
+    const typeFinal = typeLocation === 'courte' ? 'courte' : 'longue'
+    setQualification({ anneeDebut, anneeCfe, typeLocation: typeFinal, paraHotellerie: false, regime, caAnneeN2: ca })
     setStep('avis')
   }
 
@@ -77,62 +82,65 @@ export function StepQualification() {
       </Field>
 
       <Field label="Type de location" required>
-        <div className="grid grid-cols-2 gap-3">
-          {(['longue', 'courte'] as const).map(t => (
-            <label key={t} className={`flex items-center gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
-              typeLocation === t ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+        <div className="grid grid-cols-1 gap-3">
+          {[
+            { v: 'longue', title: 'Longue durée', sub: 'Bail meublé classique (> 1 mois)', color: 'blue' },
+            { v: 'courte', title: 'Courte durée', sub: 'Airbnb, saisonnier, location à la nuitée', color: 'blue' },
+            { v: 'courte_para', title: 'Courte durée — para-hôtellerie', sub: 'Vous fournissez au moins 3 services parmi : petit-déjeuner, ménage en cours de séjour, linge de maison, accueil des locataires', color: 'amber' },
+          ].map(t => (
+            <label key={t.v} className={`flex items-start gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
+              typeLocation === t.v
+                ? t.color === 'amber' ? 'border-amber-400 bg-amber-50' : 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 hover:border-gray-300'
             }`}>
-              <input type="radio" name="type" value={t} checked={typeLocation === t} onChange={() => { setTypeLocation(t); setParaHotellerie(false) }} className="text-blue-600" />
+              <input
+                type="radio"
+                name="type"
+                value={t.v}
+                checked={typeLocation === t.v}
+                onChange={() => { setTypeLocation(t.v as typeof typeLocation); setErreur(null) }}
+                className="text-blue-600 mt-0.5"
+              />
               <div>
-                <div className="text-sm font-medium text-gray-800">{t === 'longue' ? 'Longue durée' : 'Courte durée'}</div>
-                <div className="text-xs text-gray-400">{t === 'longue' ? 'Bail meublé classique' : 'Airbnb, saisonnier'}</div>
+                <div className="text-sm font-medium text-gray-800">{t.title}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{t.sub}</div>
               </div>
             </label>
           ))}
         </div>
       </Field>
 
-      {typeLocation === 'courte' && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <p className="text-sm font-medium text-amber-800 mb-3">
-            Vérification para-hôtellerie
-          </p>
-          <p className="text-xs text-amber-700 mb-3">
-            Proposez-vous au moins 3 de ces 4 services à vos locataires ?
-            Petit-déjeuner · Ménage en cours de séjour · Linge fourni · Accueil des locataires
-          </p>
-          <div className="flex gap-4">
-            {[{ v: false, l: 'Non (moins de 3)' }, { v: true, l: 'Oui (3 ou plus)' }].map(opt => (
-              <label key={String(opt.v)} className="flex items-center gap-2 text-sm text-amber-800 cursor-pointer">
-                <input type="radio" name="para" checked={paraHotellerie === opt.v} onChange={() => setParaHotellerie(opt.v)} />
-                {opt.l}
-              </label>
-            ))}
-          </div>
-        </div>
+      {typeLocation === 'courte_para' && (
+        <Callout type="warning">
+          Votre activité relève de la para-hôtellerie. Ce service ne couvre pas ce cas — nous vous recommandons de consulter un expert-comptable.
+        </Callout>
       )}
 
-      <Field label={`Chiffre d'affaires ${anneeCfe - 2} (loyers encaissés)`} hint={`L'année N-2 par rapport à votre CFE ${anneeCfe}`} required>
-        <div className="relative">
-          <Input
-            type="number"
-            value={caAnneeN2}
-            onChange={e => setCaAnneeN2(e.target.value)}
-            placeholder="28 000"
-            min="0"
-          />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-        </div>
-      </Field>
+      {typeLocation !== 'courte_para' && (
+        <Field label={`Chiffre d'affaires ${anneeCfe - 2} (loyers encaissés)`} hint={`L'année N-2 par rapport à votre CFE ${anneeCfe}`} required>
+          <div className="relative">
+            <Input
+              type="number"
+              value={caAnneeN2}
+              onChange={e => setCaAnneeN2(e.target.value)}
+              placeholder="28 000"
+              min="0"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+          </div>
+        </Field>
+      )}
 
       {erreur && <Callout type="danger">{erreur}</Callout>}
 
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-      >
-        Continuer →
-      </button>
+      {typeLocation !== 'courte_para' && (
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+        >
+          Continuer →
+        </button>
+      )}
     </form>
   )
 }

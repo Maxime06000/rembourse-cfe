@@ -9,9 +9,6 @@ export function StepFinancier() {
 
   const [loyers, setLoyers] = useState('')
   const [chargesExternes, setChargesExternes] = useState('')
-  const [impotsTaxes, setImpotsTaxes] = useState('')
-  const [amortissements, setAmortissements] = useState('')
-  const [chargesFinancieres, setChargesFinancieres] = useState('')
   const [recettesBrutes, setRecettesBrutes] = useState('')
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
 
@@ -31,9 +28,10 @@ export function StepFinancier() {
       setFinancier({
         loyers: n(loyers),
         chargesExternes: n(chargesExternes),
-        impotsTaxes: n(impotsTaxes),
-        amortissements: n(amortissements),
-        chargesFinancieres: n(chargesFinancieres),
+        // Forcés à 0 conformément aux instructions de l'administration fiscale
+        impotsTaxes: 0,
+        amortissements: 0,
+        chargesFinancieres: 0,
       })
     } else {
       setFinancier({ recettesBrutes: n(recettesBrutes) })
@@ -48,93 +46,103 @@ export function StepFinancier() {
       </h2>
       <p className="text-sm text-gray-500">
         {regime === 'reel'
-          ? `Saisissez les données de votre exercice ${anneeCfe} (liasse 2033-B).`
+          ? `Saisissez les données de votre exercice ${anneeCfe} issues de votre liasse fiscale 2033-B.`
           : `Saisissez vos recettes brutes déclarées pour l'année ${anneeCfe}.`}
       </p>
 
       {regime === 'reel' ? (
         <>
-          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Produits</p>
-            <Field label="Loyers encaissés" hint="Production vendue — 2033-B" required error={erreurs.loyers}>
-              <div className="relative">
-                <Input type="number" value={loyers} onChange={e => setLoyers(e.target.value)} placeholder="28 268" error={!!erreurs.loyers} />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-              </div>
-            </Field>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Charges</p>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Charges externes" hint="Gestion, entretien, assurance…">
-                <div className="relative">
-                  <Input type="number" value={chargesExternes} onChange={e => setChargesExternes(e.target.value)} placeholder="9 663" />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-                </div>
-              </Field>
-              <Field label="Impôts et taxes" hint="CFE incluse — 2033-B">
-                <div className="relative">
-                  <Input type="number" value={impotsTaxes} onChange={e => setImpotsTaxes(e.target.value)} placeholder="4 672" />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-                </div>
-              </Field>
-              <Field label="Amortissements" hint="Dotations aux amortissements">
-                <div className="relative">
-                  <Input type="number" value={amortissements} onChange={e => setAmortissements(e.target.value)} placeholder="12 779" />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-                </div>
-              </Field>
-              <Field label="Intérêts d'emprunt" hint="Charges financières — 2033-B">
-                <div className="relative">
-                  <Input type="number" value={chargesFinancieres} onChange={e => setChargesFinancieres(e.target.value)} placeholder="2 414" />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-                </div>
-              </Field>
+          <Field
+            label="Loyers encaissés"
+            hint="2033-B → Produits d'exploitation → Production vendue"
+            required
+            error={erreurs.loyers}
+          >
+            <div className="relative">
+              <Input
+                type="number"
+                value={loyers}
+                onChange={e => setLoyers(e.target.value)}
+                placeholder="28 268"
+                error={!!erreurs.loyers}
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
             </div>
-          </div>
+          </Field>
+
+          <Field
+            label="Charges externes"
+            hint="2033-B → Charges d'exploitation → Autres charges externes"
+          >
+            <div className="relative">
+              <Input
+                type="number"
+                value={chargesExternes}
+                onChange={e => setChargesExternes(e.target.value)}
+                placeholder="9 663"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
+            </div>
+          </Field>
 
           {loyers && (
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-700">
-              VA estimée :{' '}
+              Valeur ajoutée estimée :{' '}
               <strong>
-                {Math.max(0,
-                  n(loyers) - n(chargesExternes) - n(impotsTaxes) - n(amortissements) - n(chargesFinancieres)
-                ).toLocaleString('fr-FR')} €
+                {Math.max(0, n(loyers) - n(chargesExternes)).toLocaleString('fr-FR')} €
               </strong>
+              <span className="text-blue-500 text-xs ml-1">(loyers − charges externes)</span>
             </div>
           )}
         </>
       ) : (
         <>
-          <Field label="Recettes annuelles brutes" hint={`Loyers déclarés pour ${anneeCfe} — case 5ND ou 5NG de votre 2042-C-PRO`} required error={erreurs.recettesBrutes}>
+          <Field
+            label="Recettes annuelles brutes"
+            hint={`Loyers déclarés pour ${anneeCfe} — case 5ND ou 5NG de votre 2042-C-PRO`}
+            required
+            error={erreurs.recettesBrutes}
+          >
             <div className="relative">
-              <Input type="number" value={recettesBrutes} onChange={e => setRecettesBrutes(e.target.value)} placeholder="18 000" error={!!erreurs.recettesBrutes} />
+              <Input
+                type="number"
+                value={recettesBrutes}
+                onChange={e => setRecettesBrutes(e.target.value)}
+                placeholder="18 000"
+                error={!!erreurs.recettesBrutes}
+              />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
             </div>
           </Field>
 
           {recettesBrutes && (
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-blue-700">
-              VA calculée automatiquement :{' '}
+              Valeur ajoutée calculée automatiquement :{' '}
               <strong>{Math.round(n(recettesBrutes) * 0.8).toLocaleString('fr-FR')} €</strong>
-              <span className="text-blue-500 ml-1">(80% des recettes)</span>
+              <span className="text-blue-500 ml-1 text-xs">(80% des recettes — art. 1647 B sexies CGI)</span>
             </div>
           )}
 
           <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
             Au micro-BIC, la valeur ajoutée est toujours égale à 80% des recettes brutes (art. 1647 B sexies du CGI).
-            L'abattement forfaitaire IR de 50% ou 30% n'entre pas dans ce calcul.
+            L'abattement forfaitaire IR (50% ou 30%) n'entre pas dans ce calcul.
           </div>
         </>
       )}
 
       <div className="flex gap-3 pt-2">
-        <button type="button" onClick={() => setStep('avis')} className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+        <button
+          type="button"
+          onClick={() => setStep('avis')}
+          className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+        >
           ← Retour
         </button>
-        <button type="submit" className="flex-[2] bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm">
-          Voir le résultat →
+        <button
+          type="submit"
+          className="flex-[2] bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+        >
+          Continuer →
         </button>
       </div>
     </form>

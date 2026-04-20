@@ -52,11 +52,12 @@ export function StepAvisCFE() {
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-xs font-medium text-blue-800 mb-2">Où trouver ces informations ?</p>
-        <ul className="text-xs text-blue-700 space-y-1">
-          <li>• <strong>Ligne 9</strong> — "Imposition sur la base minimum" (Oui/Non)</li>
-          <li>• <strong>Ligne 25</strong> — "Total de cotisation foncière des entreprises"</li>
-          <li>• <strong>Ligne 189</strong> — "Information : cotisation minimum CFE"</li>
-          <li>• <strong>Référence avis</strong> — Cadre "Vos références" en haut de l'avis</li>
+        <ul className="text-xs text-blue-700 space-y-1.5">
+          <li>• <strong>Ligne 9</strong> — "Imposition sur la base minimum" (Oui/Non) — tableau "Éléments de calcul" de l'avis</li>
+          <li>• <strong>Ligne 25</strong> — "Total de cotisation foncière des entreprises" — bas du tableau</li>
+          <li>• <strong>Ligne 189</strong> — "Information : cotisation minimum CFE" — sous le tableau</li>
+          <li>• <strong>Référence de l'avis</strong> — cadre "Vos références" en haut à gauche de l'avis (ex : 25 06 0363284 33)</li>
+          <li>• <strong>Numéro de rôle</strong> — cadre "Vos références" en haut à gauche, ligne "Numéro de rôle" (ex : 092)</li>
         </ul>
       </div>
 
@@ -98,10 +99,10 @@ export function StepAvisCFE() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Référence de l'avis" hint="Ex: 25 06 0363284 33" required error={erreurs.referenceAvis}>
+            <Field label="Référence de l'avis" hint='Cadre "Vos références" — ex: 25 06 0363284 33' required error={erreurs.referenceAvis}>
               <Input value={referenceAvis} onChange={e => setReferenceAvis(e.target.value)} placeholder="25 06 0363284 33" error={!!erreurs.referenceAvis} />
             </Field>
-            <Field label="Numéro de rôle" hint="Ex: 092" required error={erreurs.numeroRole}>
+            <Field label="Numéro de rôle" hint='Cadre "Vos références" — ex: 092' required error={erreurs.numeroRole}>
               <Input value={numeroRole} onChange={e => setNumeroRole(e.target.value)} placeholder="092" error={!!erreurs.numeroRole} />
             </Field>
           </div>

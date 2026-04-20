@@ -76,13 +76,9 @@ export const MESSAGES_ECHEC: Record<FiltreEchec & string, string> = {
 }
 
 export function calculerVAReelle(donnees: DonneesReel): number {
-  return (
-    donnees.loyers -
-    donnees.chargesExternes -
-    donnees.impotsTaxes -
-    donnees.amortissements -
-    donnees.chargesFinancieres
-  )
+  // Conformément aux instructions de l'administration fiscale :
+  // VA = Loyers encaissés - Charges externes uniquement
+  return donnees.loyers - donnees.chargesExternes
 }
 
 export function calculerVAMicro(donnees: DonneesMicro): number {
