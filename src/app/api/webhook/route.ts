@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabase'
 import { genererMailSIE, genererEmailConfirmation } from '@/lib/mail'
+import { genererPDFFormulaire } from '@/lib/pdf'
 import { Resend } from 'resend'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' })
@@ -45,22 +46,30 @@ export async function POST(req: NextRequest) {
 
     if (!sim) return NextResponse.json({ ok: true })
 
-    // Generate documents
-    const mailSIE = genererMailSIE(sim)
+    // Generate email content
     const { subject, html } = genererEmailConfirmation(sim)
 
-    // Send email with mail content as attachment
+    // Try to generate PDF - if PDF files don't exist yet, send without
+    const attachments: Array<{ filename: string; content: string }> = []
+
+    try {
+      const pdfBuffer = await genererPDFFormulaire(sim)
+      const formName = sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'
+      attachments.push({
+        filename: `${formName}_prefilled_${sim.nom.replace(/\s/g, '_')}_CFE${sim.annee_cfe}.pdf`,
+        content: pdfBuffer.toString('base64'),
+      })
+    } catch (pdfErr) {
+      console.warn('PDF generation skipped (form files not yet uploaded):', pdfErr)
+    }
+
+    // Send email
     await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? 'contact@rembourse-cfe.fr',
+      from: process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
       to: sim.email,
       subject,
       html,
-      attachments: [
-        {
-          filename: `mail_SIE_CFE_${sim.annee_cfe}_${sim.nom.replace(/\s/g, '_')}.txt`,
-          content: Buffer.from(mailSIE).toString('base64'),
-        },
-      ],
+      attachments,
     })
 
     // Mark documents as sent

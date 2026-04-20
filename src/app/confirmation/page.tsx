@@ -19,10 +19,26 @@ export default function ConfirmationPage() {
         <h2 className="font-semibold text-blue-900 text-sm">Que faire maintenant ?</h2>
 
         {[
-          { n: '1', title: 'Ouvrez votre email', desc: 'Vous avez reçu le mail prêt à envoyer à votre SIE et les instructions.' },
-          { n: '2', title: 'Connectez-vous sur impots.gouv.fr', desc: 'Espace professionnel → Messagerie sécurisée → CFE/CVAE → Je formule une réclamation.' },
-          { n: '3', title: 'Copiez-collez le mail', desc: "Joignez votre avis CFE et votre liasse fiscale en pièces jointes." },
-          { n: '4', title: 'Attendez la réponse', desc: "L'administration dispose de 6 mois. En cas d'accord, virement avec intérêts moratoires." },
+          {
+            n: '1',
+            title: 'Ouvrez votre email',
+            desc: 'Vous avez reçu le mail prêt à envoyer à votre SIE ainsi que le formulaire officiel pré-rempli (à signer).',
+          },
+          {
+            n: '2',
+            title: 'Connectez-vous sur impots.gouv.fr',
+            desc: 'Espace professionnel → Messagerie sécurisée → CFE/CVAE → Je formule une réclamation.',
+          },
+          {
+            n: '3',
+            title: 'Copiez-collez le mail et joignez les pièces',
+            desc: 'Joignez votre avis CFE et le formulaire officiel pré-rempli reçu par mail — à signer avant envoi.',
+          },
+          {
+            n: '4',
+            title: 'Attendez la réponse',
+            desc: "L'administration dispose de 6 mois. En cas d'accord, virement avec intérêts moratoires.",
+          },
         ].map(step => (
           <div key={step.n} className="flex gap-3">
             <div className="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">

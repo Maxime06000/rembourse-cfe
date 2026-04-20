@@ -5,14 +5,13 @@ import { useSimulation } from '@/lib/store'
 import { verifierFiltres, MESSAGES_ECHEC } from '@/lib/calcul'
 import { Field, Select, Input, Callout } from '@/components/FormElements'
 
-const ANNEES_CFE = [2024, 2025]
 const ANNEE_COURANTE = new Date().getFullYear()
+const ANNEE_CFE = ANNEE_COURANTE - 1 // Toujours N-1
 
 export function StepQualification() {
   const { setStep, setQualification } = useSimulation()
 
   const [anneeDebut, setAnneeDebut] = useState<number>(ANNEE_COURANTE - 3)
-  const [anneeCfe, setAnneeCfe] = useState<number>(2024)
   const [typeLocation, setTypeLocation] = useState<'longue' | 'courte' | 'courte_para'>('longue')
   const [regime, setRegime] = useState<'reel' | 'micro'>('reel')
   const [caAnneeN2, setCaAnneeN2] = useState<string>('')
@@ -29,7 +28,7 @@ export function StepQualification() {
 
     const filtre = verifierFiltres({
       anneeDebut,
-      anneeCfe,
+      anneeCfe: ANNEE_CFE,
       caAnneeN2: ca,
       paraHotellerie: false,
       ligne9Oui: false,
@@ -42,7 +41,14 @@ export function StepQualification() {
 
     setErreur(null)
     const typeFinal = typeLocation === 'courte' ? 'courte' : 'longue'
-    setQualification({ anneeDebut, anneeCfe, typeLocation: typeFinal, paraHotellerie: false, regime, caAnneeN2: ca })
+    setQualification({
+      anneeDebut,
+      anneeCfe: ANNEE_CFE,
+      typeLocation: typeFinal,
+      paraHotellerie: false,
+      regime,
+      caAnneeN2: ca,
+    })
     setStep('avis')
   }
 
@@ -50,20 +56,21 @@ export function StepQualification() {
     <form onSubmit={handleSubmit} className="space-y-5">
       <h2 className="font-semibold text-gray-900 text-base">Vérification d'éligibilité</h2>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="CFE de quelle année ?" required>
-          <Select value={anneeCfe} onChange={e => setAnneeCfe(Number(e.target.value))}>
-            {ANNEES_CFE.map(a => <option key={a} value={a}>{a}</option>)}
-          </Select>
-        </Field>
-        <Field label="Début d'activité LMNP" hint="Année de votre 1ère déclaration" required>
-          <Select value={anneeDebut} onChange={e => setAnneeDebut(Number(e.target.value))}>
-            {Array.from({ length: 15 }, (_, i) => ANNEE_COURANTE - i - 1).map(a => (
-              <option key={a} value={a}>{a}</option>
-            ))}
-          </Select>
-        </Field>
+      <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center gap-3">
+        <div className="text-2xl font-bold text-blue-700">{ANNEE_CFE}</div>
+        <div>
+          <p className="text-sm font-medium text-blue-800">CFE {ANNEE_CFE} — année traitée</p>
+          <p className="text-xs text-blue-600">Délai de réclamation : avant le 31/12/{ANNEE_COURANTE}</p>
+        </div>
       </div>
+
+      <Field label="Début d'activité LMNP" hint="Année de votre 1ère déclaration" required>
+        <Select value={anneeDebut} onChange={e => setAnneeDebut(Number(e.target.value))}>
+          {Array.from({ length: 15 }, (_, i) => ANNEE_COURANTE - i - 1).map(a => (
+            <option key={a} value={a}>{a}</option>
+          ))}
+        </Select>
+      </Field>
 
       <Field label="Régime fiscal" required>
         <div className="grid grid-cols-2 gap-3">
@@ -117,7 +124,11 @@ export function StepQualification() {
       )}
 
       {typeLocation !== 'courte_para' && (
-        <Field label={`Chiffre d'affaires ${anneeCfe - 2} (loyers encaissés)`} hint={`L'année N-2 par rapport à votre CFE ${anneeCfe}`} required>
+        <Field
+          label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`}
+          hint={`L'année N-2 par rapport à votre CFE ${ANNEE_CFE}`}
+          required
+        >
           <div className="relative">
             <Input
               type="number"
