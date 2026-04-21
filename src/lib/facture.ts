@@ -81,9 +81,9 @@ export async function genererFacture(sim: SimulationData): Promise<Buffer> {
   // ── Tableau prestations ──
   y -= 30
   // En-tête tableau
-  page.drawRectangle({ x: 40, y: y - 5, width: width - 80, height: 24, color: blue })
-  page.drawText('Description', { x: 50, y: y + 4, size: 10, font: fontBold, color: rgb(1,1,1) })
-  page.drawText('Montant', { x: width - 120, y: y + 4, size: 10, font: fontBold, color: rgb(1,1,1) })
+  page.drawRectangle({ x: 40, y: y - 7, width: width - 80, height: 32, color: blue })
+  page.drawText('Description', { x: 50, y: y + 8, size: 10, font: fontBold, color: rgb(1,1,1) })
+  page.drawText('Montant', { x: width - 120, y: y + 8, size: 10, font: fontBold, color: rgb(1,1,1) })
 
   // Ligne prestation
   y -= 30

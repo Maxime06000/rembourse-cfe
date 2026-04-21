@@ -18,23 +18,21 @@ export function StepQualification() {
     store.typeLocation === 'courte' ? 'courte' : store.typeLocation === 'longue' ? 'longue' : 'longue'
   )
   const [regime, setRegime] = useState<'reel' | 'micro'>(store.regime ?? 'reel')
-  const [caAnneeN2, setCaAnneeN2] = useState<string>(store.caAnneeN2 ? String(store.caAnneeN2) : '')
   const [erreur, setErreur] = useState<string | null>(null)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const ca = parseFloat(caAnneeN2.replace(',', '.')) || 0
 
     if (typeLocation === 'courte_para') {
       setErreur(MESSAGES_ECHEC['para_hotellerie'])
       return
     }
 
-    const filtre = verifierFiltres({ anneeDebut, anneeCfe: ANNEE_CFE, caAnneeN2: ca, paraHotellerie: false, ligne9Oui: false })
+    const filtre = verifierFiltres({ anneeDebut, anneeCfe: ANNEE_CFE, caAnneeN2: 0, paraHotellerie: false, ligne9Oui: false })
     if (filtre && filtre !== 'abattement_50') { setErreur(MESSAGES_ECHEC[filtre]); return }
 
     setErreur(null)
-    setQualification({ anneeDebut, anneeCfe: ANNEE_CFE, typeLocation: typeLocation === 'courte' ? 'courte' : 'longue', paraHotellerie: false, regime, caAnneeN2: ca })
+    setQualification({ anneeDebut, anneeCfe: ANNEE_CFE, typeLocation: typeLocation === 'courte' ? 'courte' : 'longue', paraHotellerie: false, regime, caAnneeN2: 0 })
     setStep('avis')
   }
 
@@ -94,15 +92,6 @@ export function StepQualification() {
 
       {typeLocation === 'courte_para' && (
         <Callout type="warning">Votre activité relève de la para-hôtellerie. Ce service ne couvre pas ce cas — nous vous recommandons de consulter un expert-comptable.</Callout>
-      )}
-
-      {typeLocation !== 'courte_para' && (
-        <Field label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`} required>
-          <div className="relative">
-            <Input type="number" value={caAnneeN2} onChange={e => setCaAnneeN2(e.target.value)} placeholder="28 000" min="0" />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
-          </div>
-        </Field>
       )}
 
       {erreur && <Callout type="danger">{erreur}</Callout>}

@@ -47,20 +47,6 @@ Madame, Monsieur,
 
 Par la présente, je formule une réclamation conformément aux dispositions de l'article 1647 B sexies du Code général des impôts, afin de solliciter le plafonnement de ma Cotisation Foncière des Entreprises (CFE) en fonction de la valeur ajoutée produite par mon activité au cours de l'exercice ${sim.annee_cfe}.
 
-Références de l'avis d'imposition CFE ${sim.annee_cfe} :
-  - Référence de l'avis : ${sim.reference_avis}
-  - Numéro de rôle : ${sim.numero_role}
-  - SIRET : ${sim.siret}
-  - CFE mise en recouvrement (ligne 25) : ${fmt(sim.cfe_ligne25)}
-  - Cotisation minimum (ligne 189) : ${fmt(sim.cfe_ligne189)}
-
-${lignesFinancier}
-
-Calcul du plafonnement (art. 1647 B sexies du CGI) :
-  Valeur ajoutée retenue × taux de plafonnement = ${fmt(sim.plafonnement)}
-
-La CFE mise en recouvrement (${fmt(sim.cfe_ligne25)}) excédant le montant du plafonnement (${fmt(sim.plafonnement)}), je sollicite un dégrèvement d'un montant de ${fmt(sim.degrevement_reel)}.
-
 Je joins à cette réclamation :
   - La copie de mon avis d'imposition CFE ${sim.annee_cfe}
   - Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} dûment complété et signé${sim.regime === 'reel' ? '\n  - Ma déclaration 2033-B' : ''}
