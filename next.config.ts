@@ -1,7 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  experimental: {
+    serverComponentsExternalPackages: ['pdfjs-dist'],
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'pdfjs-dist': 'pdfjs-dist/legacy/build/pdf.mjs',
+      }
+    }
+    return config
+  },
 };
 
 export default nextConfig;

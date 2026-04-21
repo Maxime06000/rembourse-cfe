@@ -22,28 +22,30 @@ export async function POST(req: NextRequest) {
       }
     } catch { /* not a zip */ }
 
-    // Format 2 : PDF natif (via pdfjs-dist)
+    // Format 2 : PDF natif via pdfjs-dist
     if (!fullText.trim()) {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs' as string)
-        const pdf = await (pdfjsLib as any).getDocument({
+        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs' as string) as any
+        const pdf = await pdfjsLib.getDocument({
           data: new Uint8Array(buffer),
           useWorkerFetch: false,
           isEvalSupported: false,
           useSystemFonts: true,
+          verbosity: 0,
         }).promise
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i)
           const content = await page.getTextContent()
-          fullText += (content.items as any[]).map((item: any) => item.str).join(' ') + '\n'
+          fullText += content.items.map((item: any) => item.str).join(' ') + '\n'
         }
-      } catch { /* pdfjs failed */ }
+      } catch (e) {
+        console.error('pdfjs error:', e)
+      }
     }
 
     if (!fullText.trim()) {
       return NextResponse.json({
-        error: 'Format non reconnu. Téléchargez l\'avis CFE depuis impots.gouv.fr (espace professionnel).'
+        error: 'Format non reconnu. Téléchargez l\'avis CFE depuis impots.gouv.fr.'
       }, { status: 400 })
     }
 
@@ -60,7 +62,6 @@ function parseCFEText(text: string) {
   const siretMatch = text.match(/N°\s*SIRET\s*[:\s]+([\d\s]{10,18})/)
   if (siretMatch) result.siret = siretMatch[1].replace(/\s/g, '').trim()
 
-  // Nom: ligne après SIRET (format ZIP) ou avant (format PDF natif)
   const nomZipMatch = text.match(/N°\s*SIRET\s*[:\s]+[\d\s]+[\r\n]+\s*([A-ZÉÈÊËÀÂÙ][A-ZÉÈÊËÀÂÙ\s\-]+?)[\r\n]/)
   const nomPdfMatch = text.match(/N°\s*SIRET\s*:\s*[\d\s]+\s+([A-ZÉÈÊËÀÂÙ][A-ZÉÈÊËÀÂÙ\s\-]+?)\s+D[eé]partement/)
   if (nomZipMatch) result.nom = nomZipMatch[1].trim()
@@ -72,13 +73,11 @@ function parseCFEText(text: string) {
   const roleMatch = text.match(/Num[eé]ro de r[ôo]le\s*[:\s]*(\d+)/)
   if (roleMatch) result.numeroRole = roleMatch[1].trim()
 
-  // Adresse: après "Lieu d'imposition : XXXX"
   const lieuZipMatch = text.match(/Lieu d['']imposition\s*[:\s]+\d+[\r\n]+(.+?)(?:[\r\n]|$)/)
   const lieuPdfMatch = text.match(/Lieu d.imposition\s*:\s*\d+\s+([A-Z0-9][A-Z0-9\s]+?)(?:\s+Vos r|\s+MONTANT|\s+D[eé]part)/)
   if (lieuZipMatch) result.adresseBien = lieuZipMatch[1].trim()
   else if (lieuPdfMatch) result.adresseBien = lieuPdfMatch[1].trim()
 
-  // Ville
   const villeZipMatch = text.match(/Commune\s*[:\s]+\d+[\r\n]+([A-ZÉÈÊËÀÂÙ][A-ZÉÈÊËÀÂÙ\s\-]+?)[\r\n]/)
   const villePdfMatch = text.match(/Commune\s*:\s*\d+\s+([A-ZÉÈÊËÀÂÙ]+)/)
   if (villeZipMatch) result.ville = villeZipMatch[1].trim()
@@ -87,22 +86,18 @@ function parseCFEText(text: string) {
   const fiscalMatch = text.match(/Num[eé]ro fiscal\s*[:\s]*([\d\s]{10,20})/)
   if (fiscalMatch) result.numeroFiscal = fiscalMatch[1].replace(/\s/g, '').trim()
 
-  // Ligne 9
   const ligne9Match = text.match(/Imposition sur la base minimum[^O]*(OUI|NON)/i)
     || text.match(/9\s*-[^O\n]{0,60}(OUI|NON)/i)
   if (ligne9Match) result.ligne9 = ligne9Match[1].toUpperCase()
 
-  // Ligne 25
   const ligne25Match = text.match(/Total de cotisation fonci[eè]re des entreprises\s+([\d]+)/)
     || text.match(/25\s*-\s*Total[^0-9]+([\d]+)/)
   if (ligne25Match) result.ligne25 = ligne25Match[1].trim()
 
-  // Ligne 189 — chercher la valeur après "MINIMUM CFE (XX)"
   const ligne189Match = text.match(/MINIMUM CFE\s*\([^)]+\)\s*([\d]+)/)
     || text.match(/189\s*-.*?(\d+)\s*[\r\n]/)
   if (ligne189Match) result.ligne189 = ligne189Match[1].trim()
 
-  // Année
   const anneeMatch = text.match(/AVIS D['']IMP[ÔO]T\s+(\d{4})/)
   if (anneeMatch) result.anneeCfe = anneeMatch[1]
 
