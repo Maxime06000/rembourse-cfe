@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
         numero_role: body.numeroRole,
         adresse_bien: body.adresseBien,
         ville: body.ville,
+        departement: body.departement || null,
         regime: body.regime,
         type_location: body.typeLocation,
         annee_debut: body.anneeDebut,
