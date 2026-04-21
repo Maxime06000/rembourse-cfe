@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdfjs = require('pdfjs-dist/legacy/build/pdf.js')
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,11 +24,10 @@ export async function POST(req: NextRequest) {
       }
     } catch { /* not a zip */ }
 
-    // Format 2 : PDF natif via pdfjs-dist
+    // Format 2 : PDF natif via pdfjs-dist v3 (CommonJS)
     if (!fullText.trim()) {
       try {
-        const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs' as string) as any
-        const pdf = await pdfjsLib.getDocument({
+        const pdf = await pdfjs.getDocument({
           data: new Uint8Array(buffer),
           useWorkerFetch: false,
           isEvalSupported: false,
@@ -36,6 +37,7 @@ export async function POST(req: NextRequest) {
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i)
           const content = await page.getTextContent()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           fullText += content.items.map((item: any) => item.str).join(' ') + '\n'
         }
       } catch (e) {
