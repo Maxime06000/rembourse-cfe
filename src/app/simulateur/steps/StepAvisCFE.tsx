@@ -46,13 +46,14 @@ export function StepAvisCFE() {
       if (data.referenceAvis) setReferenceAvis(data.referenceAvis)
       if (data.numeroRole) setNumeroRole(data.numeroRole)
       if (data.adresseBien) setAdresseBien(data.adresseBien)
-      if (data.nom || data.siret || data.ville) {
+      if (data.nom || data.siret || data.ville || data.departement) {
         setIdentite({
           ...(data.nom && { nom: data.nom }),
           ...(data.siret && { siret: data.siret }),
           ...(data.ville && { ville: data.ville }),
           ...(data.numeroFiscal && { numeroFiscal: data.numeroFiscal }),
           ...(data.adresseBien && { adresseBien: data.adresseBien }),
+          ...(data.departement && { departement: data.departement }),
         })
       }
       setUploadSuccess(true)

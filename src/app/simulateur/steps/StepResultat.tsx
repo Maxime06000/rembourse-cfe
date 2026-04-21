@@ -38,6 +38,7 @@ export function StepResultat() {
           numeroRole: store.numeroRole,
           adresseBien: store.adresseBien,
           ville: store.ville,
+          departement: store.departement,
           // Qualification
           regime: store.regime,
           typeLocation: store.typeLocation,
