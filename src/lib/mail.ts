@@ -104,7 +104,7 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
 
     <div style="background: #f9fafb; border-left: 4px solid #9ca3af; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
       <p style="margin: 0 0 6px; font-weight: 700; font-size: 14px; color: #111;">Étape 3 — Joignez vos pièces justificatives</p>
-      <p style="margin: 0; font-size: 13px; color: #555;">Ajoutez en pièces jointes : votre avis CFE ${sim.annee_cfe}${sim.regime === 'reel' ? ' et votre déclaration 2033-B' : ''}.</p>
+      <p style="margin: 0; font-size: 13px; color: #555;">Ajoutez en pièces jointes : votre avis CFE ${sim.annee_cfe}.</p>
     </div>
 
     <div style="background: #f9fafb; border-left: 4px solid #9ca3af; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
