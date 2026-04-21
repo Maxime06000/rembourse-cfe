@@ -56,6 +56,10 @@ export function extractCFEData(buffer: Buffer): Record<string, string> {
   const villeMatch = text.match(/[Cc]\s*o\s*m\s*m\s*u\s*n\s*e\s*:\s*\d+\s+([A-Z][A-Z\s\-]+?)(?:\s+Lieu|L\s*i\s*e\s*u)/i)
   if (villeMatch) result.ville = villeMatch[1].replace(/\s+/g, ' ').trim()
 
+  // Département: after "D é p a r t e m e n t :"
+  const deptMatch = text.match(/[Dd]\s*[éè]\s*p\s*a\s*r\s*t\s*e\s*m\s*e\s*n\s*t\s*:\s*(\d{2,3})/i)
+  if (deptMatch) result.departement = deptMatch[1].trim()
+
   // Numéro fiscal (same as SIRET for LMNP)
   result.numeroFiscal = result.siret || ''
 

@@ -7,6 +7,7 @@ interface SimulationData {
   siret: string
   adresse_bien: string
   ville: string
+  departement: string
   telephone: string | null
   email: string
   reference_avis: string
@@ -76,7 +77,7 @@ function fillReelForm(
   const vaRetenue = Math.min(va, ca * 0.8)
 
   // ── SECTION B — Récapitulation CFE ──
-  fill(form, 'b1', sim.siret.replace(/\s/g, '').substring(0, 2)) // Code département
+  fill(form, 'b1', sim.departement || sim.siret.replace(/\s/g, '').substring(0, 2)) // Code département
   fill(form, 'b2', `${sim.adresse_bien}, ${sim.ville}`)
   fill(form, 'b3', sim.siret.replace(/\s/g, ''))
   fill(form, 'b4', sim.numero_role)

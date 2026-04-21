@@ -40,6 +40,7 @@ interface SimulationState {
   numeroFiscal: string
   adresseBien: string
   ville: string
+  departement: string
 
   // Résultat
   resultat: ResultatSimulation | null
@@ -82,6 +83,7 @@ const initialState = {
   numeroFiscal: '',
   adresseBien: '',
   ville: '',
+  departement: '',
   resultat: null,
 }
 

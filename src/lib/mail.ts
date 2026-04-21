@@ -49,7 +49,7 @@ Par la présente, je formule une réclamation conformément aux dispositions de 
 
 Je joins à cette réclamation :
   - La copie de mon avis d'imposition CFE ${sim.annee_cfe}
-  - Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} dûment complété et signé${sim.regime === 'reel' ? '\n  - Ma déclaration 2033-B' : ''}
+  - Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} dûment complété et signé
 
 Je vous prie d'agréer, Madame, Monsieur, l'expression de mes respectueuses salutations.
 
