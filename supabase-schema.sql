@@ -13,6 +13,7 @@ create table if not exists simulations (
   numero_role text not null,
   adresse_bien text not null,
   ville text not null,
+  departement text,
 
   -- Qualification
   regime text not null check (regime in ('reel', 'micro')),
