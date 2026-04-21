@@ -69,8 +69,8 @@ export function extractCFEData(buffer: Buffer): Record<string, string> {
     || text.match(/PAYER\s+([\d]{3,5}),/)
   if (ligne25Match) result.ligne25 = ligne25Match[1].trim()
 
-  // Ligne 189: cotisation minimum — après "\( 28"
-  const ligne189Match = text.match(/\\\(\s*2\s*8\s+([\d]{3,4})/)
+  // Ligne 189: cotisation minimum — après "( 28" (le \( du PDF devient ( après décompression)
+  const ligne189Match = text.match(/\(\s*2\s*8\s+([\d]{3,4})/)
   if (ligne189Match) result.ligne189 = ligne189Match[1].trim()
 
   // Année: depuis le code document (VXXXXXX2025) ou la date de paiement
