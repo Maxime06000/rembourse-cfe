@@ -33,9 +33,16 @@ export function StepAvisCFE() {
       const res = await fetch('/api/parse-cfe', { method: 'POST', body: formData })
       const data = await res.json()
       if (!res.ok || data.error) { setUploadError(data.error || 'Erreur de lecture'); return }
+
+      // Vérifier qu'au moins un champ clé a été extrait
+      if (!data.ligne25 && !data.ligne189 && !data.referenceAvis) {
+        setUploadError('PDF lu mais données non reconnues — remplissez les champs manuellement.')
+        return
+      }
+
       if (data.ligne9 !== undefined) setLigne9(data.ligne9 === 'OUI')
-      if (data.ligne25) setLigne25(data.ligne25)
-      if (data.ligne189) setLigne189(data.ligne189)
+      if (data.ligne25) setLigne25(String(data.ligne25))
+      if (data.ligne189) setLigne189(String(data.ligne189))
       if (data.referenceAvis) setReferenceAvis(data.referenceAvis)
       if (data.numeroRole) setNumeroRole(data.numeroRole)
       if (data.adresseBien) setAdresseBien(data.adresseBien)

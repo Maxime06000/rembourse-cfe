@@ -51,7 +51,9 @@ export async function POST(req: NextRequest) {
       }, { status: 400 })
     }
 
-    return NextResponse.json(parseCFEText(fullText))
+    const parsed = parseCFEText(fullText)
+    console.log("[parse-cfe] result:", JSON.stringify(parsed))
+    return NextResponse.json(parsed)
   } catch (err) {
     console.error('Parse error:', err)
     return NextResponse.json({ error: 'Impossible de lire ce fichier' }, { status: 400 })
