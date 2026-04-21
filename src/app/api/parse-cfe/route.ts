@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer)
     let fullText = ''
 
-    // Format impots.gouv.fr = ZIP contenant des fichiers .txt
+    // Format 1 : ZIP-based (format impots.gouv.fr téléchargé depuis l'espace pro)
     try {
       const JSZip = (await import('jszip')).default
       const zip = await JSZip.loadAsync(buffer)
@@ -21,6 +21,16 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch { /* not a zip */ }
+
+    // Format 2 : PDF natif
+    if (!fullText.trim()) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const pdfParse = require('pdf-parse')
+        const data = await pdfParse(buffer)
+        fullText = data.text
+      } catch { /* pdf-parse failed */ }
+    }
 
     if (!fullText.trim()) {
       return NextResponse.json({

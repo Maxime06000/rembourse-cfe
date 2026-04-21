@@ -97,7 +97,7 @@ export function StepQualification() {
       )}
 
       {typeLocation !== 'courte_para' && (
-        <Field label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`} hint={`L'année N-2 par rapport à votre CFE ${ANNEE_CFE}`} required>
+        <Field label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`} required>
           <div className="relative">
             <Input type="number" value={caAnneeN2} onChange={e => setCaAnneeN2(e.target.value)} placeholder="28 000" min="0" />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
