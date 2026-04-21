@@ -48,13 +48,13 @@ export function extractCFEData(buffer: Buffer): Record<string, string> {
     || text.match(/ole\s*:\s*(\d+)/)
   if (roleMatch) result.numeroRole = roleMatch[1].trim()
 
-  // Adresse: after lieu d'imposition code (4 digits)
-  const adresseMatch = text.match(/:\s*\d{4}\s+([\dA-Z][^V]{3,40}?)(?:\s+V\s*o\s*s|\s+NICE|\s+06\d{3})/i)
+  // Adresse: after lieu d'imposition code (4 digits), before "V o s" pattern
+  const adresseMatch = text.match(/:\s*\d{4}\s+([\dA-Z].*?)\s+V\s+[a-z]/i)
   if (adresseMatch) result.adresseBien = adresseMatch[1].trim()
 
-  // Ville
-  const villeMatch = text.match(/\b(NICE|PARIS|LYON|MARSEILLE|BORDEAUX|TOULOUSE|NANTES|STRASBOURG|MONTPELLIER|RENNES|LILLE|REIMS|GRENOBLE|DIJON|ANGERS|NIMES|TOULON|BREST|CAEN|LIMOGES|ROUEN|AMIENS|METZ|PERPIGNAN|ORLEANS|MULHOUSE)\b/i)
-  if (villeMatch) result.ville = villeMatch[1].toUpperCase()
+  // Ville: after "Commune :" or "C o m m u n e :"
+  const villeMatch = text.match(/[Cc]\s*o\s*m\s*m\s*u\s*n\s*e\s*:\s*\d+\s+([A-Z][A-Z\s\-]+?)(?:\s+Lieu|L\s*i\s*e\s*u)/i)
+  if (villeMatch) result.ville = villeMatch[1].replace(/\s+/g, ' ').trim()
 
   // Numéro fiscal (same as SIRET for LMNP)
   result.numeroFiscal = result.siret || ''

@@ -56,7 +56,7 @@ export function verifierFiltres(params: {
 
   if (diff <= 0) return 'exonere_premiere_annee'
   if (diff === 1) return 'abattement_50'
-if (caAnneeN2 > 0 && caAnneeN2 <= 5000) return 'ca_inferieur_5000'
+  if (caAnneeN2 > 0 && caAnneeN2 <= 5000) return 'ca_inferieur_5000'
   if (paraHotellerie) return 'para_hotellerie'
   if (ligne9Oui) return 'ligne9_oui'
   return null
