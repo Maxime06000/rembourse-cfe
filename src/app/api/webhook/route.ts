@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabaseAdmin } from '@/lib/supabase'
-import { genererMailSIE, genererEmailConfirmation } from '@/lib/mail'
+import { genererEmailConfirmation } from '@/lib/mail'
 import { genererPDFFormulaire } from '@/lib/pdf'
+import { genererFacture } from '@/lib/facture'
 import { Resend } from 'resend'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' })
@@ -13,7 +14,6 @@ export async function POST(req: NextRequest) {
   const sig = req.headers.get('stripe-signature')!
 
   let event: Stripe.Event
-
   try {
     event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch (err) {
@@ -24,10 +24,8 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
     const simulationId = session.metadata?.simulationId
-
     if (!simulationId) return NextResponse.json({ ok: true })
 
-    // Update payment status
     await supabaseAdmin
       .from('simulations')
       .update({
@@ -37,7 +35,6 @@ export async function POST(req: NextRequest) {
       })
       .eq('id', simulationId)
 
-    // Fetch simulation data
     const { data: sim } = await supabaseAdmin
       .from('simulations')
       .select('*')
@@ -46,12 +43,10 @@ export async function POST(req: NextRequest) {
 
     if (!sim) return NextResponse.json({ ok: true })
 
-    // Generate email content
     const { subject, html } = genererEmailConfirmation(sim)
-
-    // Try to generate PDF - if PDF files don't exist yet, send without
     const attachments: Array<{ filename: string; content: string }> = []
 
+    // Formulaire officiel pré-rempli
     try {
       const pdfBuffer = await genererPDFFormulaire(sim)
       const formName = sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'
@@ -59,20 +54,31 @@ export async function POST(req: NextRequest) {
         filename: `${formName}_prefilled_${sim.nom.replace(/\s/g, '_')}_CFE${sim.annee_cfe}.pdf`,
         content: pdfBuffer.toString('base64'),
       })
-    } catch (pdfErr) {
-      console.warn('PDF generation skipped (form files not yet uploaded):', pdfErr)
+    } catch (err) {
+      console.warn('PDF formulaire skipped:', err)
     }
 
-    // Send email
+    // Facture
+    try {
+      const factureBuffer = await genererFacture(sim)
+      const commission = Math.round(sim.degrevement_reel * 0.20)
+      attachments.push({
+        filename: `Facture_RembourseCFE_${sim.nom.replace(/\s/g, '_')}_${sim.annee_cfe}.pdf`,
+        content: factureBuffer.toString('base64'),
+      })
+    } catch (err) {
+      console.warn('Facture skipped:', err)
+    }
+
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
       to: sim.email,
+      replyTo: 'rembourse-cfe@gmail.com',
       subject,
       html,
       attachments,
     })
 
-    // Mark documents as sent
     await supabaseAdmin
       .from('simulations')
       .update({ documents_sent: true })

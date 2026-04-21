@@ -6,15 +6,19 @@ import { verifierFiltres, MESSAGES_ECHEC } from '@/lib/calcul'
 import { Field, Select, Input, Callout } from '@/components/FormElements'
 
 const ANNEE_COURANTE = new Date().getFullYear()
-const ANNEE_CFE = ANNEE_COURANTE - 1 // Toujours N-1
+const ANNEE_CFE = ANNEE_COURANTE - 1
 
 export function StepQualification() {
-  const { setStep, setQualification } = useSimulation()
+  const store = useSimulation()
+  const { setStep, setQualification } = store
 
-  const [anneeDebut, setAnneeDebut] = useState<number>(ANNEE_COURANTE - 3)
-  const [typeLocation, setTypeLocation] = useState<'longue' | 'courte' | 'courte_para'>('longue')
-  const [regime, setRegime] = useState<'reel' | 'micro'>('reel')
-  const [caAnneeN2, setCaAnneeN2] = useState<string>('')
+  // Initialise depuis le store si déjà rempli
+  const [anneeDebut, setAnneeDebut] = useState<number>(store.anneeDebut ?? ANNEE_COURANTE - 3)
+  const [typeLocation, setTypeLocation] = useState<'longue' | 'courte' | 'courte_para'>(
+    store.typeLocation === 'courte' ? 'courte' : store.typeLocation === 'longue' ? 'longue' : 'longue'
+  )
+  const [regime, setRegime] = useState<'reel' | 'micro'>(store.regime ?? 'reel')
+  const [caAnneeN2, setCaAnneeN2] = useState<string>(store.caAnneeN2 ? String(store.caAnneeN2) : '')
   const [erreur, setErreur] = useState<string | null>(null)
 
   function handleSubmit(e: React.FormEvent) {
@@ -26,29 +30,11 @@ export function StepQualification() {
       return
     }
 
-    const filtre = verifierFiltres({
-      anneeDebut,
-      anneeCfe: ANNEE_CFE,
-      caAnneeN2: ca,
-      paraHotellerie: false,
-      ligne9Oui: false,
-    })
-
-    if (filtre && filtre !== 'abattement_50') {
-      setErreur(MESSAGES_ECHEC[filtre])
-      return
-    }
+    const filtre = verifierFiltres({ anneeDebut, anneeCfe: ANNEE_CFE, caAnneeN2: ca, paraHotellerie: false, ligne9Oui: false })
+    if (filtre && filtre !== 'abattement_50') { setErreur(MESSAGES_ECHEC[filtre]); return }
 
     setErreur(null)
-    const typeFinal = typeLocation === 'courte' ? 'courte' : 'longue'
-    setQualification({
-      anneeDebut,
-      anneeCfe: ANNEE_CFE,
-      typeLocation: typeFinal,
-      paraHotellerie: false,
-      regime,
-      caAnneeN2: ca,
-    })
+    setQualification({ anneeDebut, anneeCfe: ANNEE_CFE, typeLocation: typeLocation === 'courte' ? 'courte' : 'longue', paraHotellerie: false, regime, caAnneeN2: ca })
     setStep('avis')
   }
 
@@ -75,9 +61,7 @@ export function StepQualification() {
       <Field label="Régime fiscal" required>
         <div className="grid grid-cols-2 gap-3">
           {(['reel', 'micro'] as const).map(r => (
-            <label key={r} className={`flex items-center gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
-              regime === r ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-            }`}>
+            <label key={r} className={`flex items-center gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${regime === r ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
               <input type="radio" name="regime" value={r} checked={regime === r} onChange={() => setRegime(r)} className="text-blue-600" />
               <div>
                 <div className="text-sm font-medium text-gray-800">{r === 'reel' ? 'Régime réel' : 'Micro-BIC'}</div>
@@ -93,21 +77,12 @@ export function StepQualification() {
           {[
             { v: 'longue', title: 'Longue durée', sub: 'Bail meublé classique (> 1 mois)', color: 'blue' },
             { v: 'courte', title: 'Courte durée', sub: 'Airbnb, saisonnier, location à la nuitée', color: 'blue' },
-            { v: 'courte_para', title: 'Courte durée — para-hôtellerie', sub: 'Vous fournissez au moins 3 services parmi : petit-déjeuner, ménage en cours de séjour, linge de maison, accueil des locataires', color: 'amber' },
+            { v: 'courte_para', title: 'Courte durée — para-hôtellerie', sub: 'Vous fournissez au moins 3 services parmi : petit-déjeuner, ménage en cours de séjour, linge de maison, accueil', color: 'amber' },
           ].map(t => (
             <label key={t.v} className={`flex items-start gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
-              typeLocation === t.v
-                ? t.color === 'amber' ? 'border-amber-400 bg-amber-50' : 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300'
+              typeLocation === t.v ? t.color === 'amber' ? 'border-amber-400 bg-amber-50' : 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
             }`}>
-              <input
-                type="radio"
-                name="type"
-                value={t.v}
-                checked={typeLocation === t.v}
-                onChange={() => { setTypeLocation(t.v as typeof typeLocation); setErreur(null) }}
-                className="text-blue-600 mt-0.5"
-              />
+              <input type="radio" name="type" value={t.v} checked={typeLocation === t.v} onChange={() => { setTypeLocation(t.v as typeof typeLocation); setErreur(null) }} className="text-blue-600 mt-0.5" />
               <div>
                 <div className="text-sm font-medium text-gray-800">{t.title}</div>
                 <div className="text-xs text-gray-400 mt-0.5">{t.sub}</div>
@@ -118,25 +93,13 @@ export function StepQualification() {
       </Field>
 
       {typeLocation === 'courte_para' && (
-        <Callout type="warning">
-          Votre activité relève de la para-hôtellerie. Ce service ne couvre pas ce cas — nous vous recommandons de consulter un expert-comptable.
-        </Callout>
+        <Callout type="warning">Votre activité relève de la para-hôtellerie. Ce service ne couvre pas ce cas — nous vous recommandons de consulter un expert-comptable.</Callout>
       )}
 
       {typeLocation !== 'courte_para' && (
-        <Field
-          label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`}
-          hint={`L'année N-2 par rapport à votre CFE ${ANNEE_CFE}`}
-          required
-        >
+        <Field label={`Chiffre d'affaires ${ANNEE_CFE - 1} (loyers encaissés)`} hint={`L'année N-2 par rapport à votre CFE ${ANNEE_CFE}`} required>
           <div className="relative">
-            <Input
-              type="number"
-              value={caAnneeN2}
-              onChange={e => setCaAnneeN2(e.target.value)}
-              placeholder="28 000"
-              min="0"
-            />
+            <Input type="number" value={caAnneeN2} onChange={e => setCaAnneeN2(e.target.value)} placeholder="28 000" min="0" />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">€</span>
           </div>
         </Field>
@@ -145,10 +108,7 @@ export function StepQualification() {
       {erreur && <Callout type="danger">{erreur}</Callout>}
 
       {typeLocation !== 'courte_para' && (
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-        >
+        <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm">
           Continuer →
         </button>
       )}

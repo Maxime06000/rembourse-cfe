@@ -130,6 +130,9 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
       <p style="margin: 0; font-size: 12px; color: #92400e;"><strong>Rappel :</strong> Le montant affiché est une estimation. L'administration fiscale reste seule compétente pour statuer. RembourseCFE est un outil d'aide à la rédaction, pas un conseil fiscal.</p>
     </div>
 
+    <p style="margin: 0 0 8px; font-size: 12px; color: #374151;">
+      Une question ? Contactez-nous : <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a>
+    </p>
     <p style="font-size: 11px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 16px; margin: 0;">
       © ${new Date().getFullYear()} RembourseCFE — Service d'aide à la réclamation CFE pour LMNP
     </p>
