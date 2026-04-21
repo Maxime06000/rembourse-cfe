@@ -12,7 +12,7 @@ export default function HomePage() {
           Récupérez votre trop-perçu<br />de CFE
         </h1>
         <p className="text-lg text-gray-500 max-w-xl mx-auto mb-8">
-          La CFE est plafonnée à 1,531% de votre valeur ajoutée.
+          La CFE est plafonnée à 1,438% de votre valeur ajoutée.
           Simulez votre dégrèvement en 3 minutes.
         </p>
         <Link
