@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useSimulation } from '@/lib/store'
-import { Field, Input } from '@/components/FormElements'
+import { Field, Input, Callout } from '@/components/FormElements'
 
 export function StepFinancier() {
   const store = useSimulation()
@@ -16,8 +16,13 @@ export function StepFinancier() {
 
   const n = (v: string) => parseFloat(v.replace(',', '.')) || 0
 
+  // Vérifier si CA ≤ 5000€
+  const caValue = regime === 'reel' ? n(loyers) : n(recettesBrutes)
+  const caTropFaible = caValue > 0 && caValue <= 5000
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (caTropFaible) return // Bloque la soumission si CA ≤ 5000€
     const errs: Record<string, string> = {}
     if (regime === 'reel' && !loyers) errs.loyers = 'Loyers requis'
     if (regime === 'micro' && !recettesBrutes) errs.recettesBrutes = 'Recettes requises'
@@ -79,11 +84,27 @@ export function StepFinancier() {
         </>
       )}
 
+      {caTropFaible && (
+        <Callout type="error">
+          <strong>Chiffre d'affaires ≤ 5 000 €</strong>
+          <p className="mt-1">Avec un CA annuel ≤ 5 000 €, vous êtes normalement exonéré de cotisation minimum CFE. Si vous avez reçu un avis de CFE, il s'agit probablement d'une erreur. Contactez directement votre Service des Impôts des Entreprises (SIE) pour régulariser votre situation.</p>
+          <p className="mt-2 text-sm">Le simulateur de plafonnement CFE ne s'applique pas dans votre cas.</p>
+        </Callout>
+      )}
+
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setStep('avis')} className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors">
           ← Retour
         </button>
-        <button type="submit" className="flex-[2] bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm">
+        <button 
+          type="submit" 
+          disabled={caTropFaible}
+          className={`flex-[2] py-2.5 rounded-lg font-medium transition-colors text-sm ${
+            caTropFaible 
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
           Continuer →
         </button>
       </div>

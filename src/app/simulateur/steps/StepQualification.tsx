@@ -12,8 +12,11 @@ export function StepQualification() {
   const store = useSimulation()
   const { setStep, setQualification } = store
 
+  const ANNEE_SEUIL = ANNEE_CFE - 2 // 2022 pour CFE 2024
+
   // Initialise depuis le store si déjà rempli
-  const [anneeDebut, setAnneeDebut] = useState<number>(store.anneeDebut ?? ANNEE_COURANTE - 3)
+  const [multiEtablissements, setMultiEtablissements] = useState<boolean>(false)
+  const [activiteAvantSeuil, setActiviteAvantSeuil] = useState<boolean>(true)
   const [typeLocation, setTypeLocation] = useState<'longue' | 'courte' | 'courte_para'>(
     store.typeLocation === 'courte' ? 'courte' : store.typeLocation === 'longue' ? 'longue' : 'longue'
   )
@@ -23,16 +26,30 @@ export function StepQualification() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (multiEtablissements) {
+      setErreur("Vous avez plusieurs établissements (plusieurs avis CFE dans différentes communes). Cette fonctionnalité sera bientôt disponible. En attendant, contactez rembourse-cfe@gmail.com pour un traitement manuel.")
+      return
+    }
+
+    if (!activiteAvantSeuil) {
+      setErreur(`Votre activité a débuté après ${ANNEE_SEUIL}. Vous bénéficiez d'une exonération (1ère année) ou d'un abattement de 50% (2e année). Le plafonnement CFE n'est pas applicable dans votre cas.`)
+      return
+    }
+
     if (typeLocation === 'courte_para') {
       setErreur(MESSAGES_ECHEC['para_hotellerie'])
       return
     }
 
-    const filtre = verifierFiltres({ anneeDebut, anneeCfe: ANNEE_CFE, caAnneeN2: 0, paraHotellerie: false, ligne9Oui: false })
-    if (filtre && filtre !== 'abattement_50') { setErreur(MESSAGES_ECHEC[filtre]); return }
-
     setErreur(null)
-    setQualification({ anneeDebut, anneeCfe: ANNEE_CFE, typeLocation: typeLocation === 'courte' ? 'courte' : 'longue', paraHotellerie: false, regime, caAnneeN2: 0 })
+    setQualification({ 
+      anneeDebut: ANNEE_SEUIL, 
+      anneeCfe: ANNEE_CFE, 
+      typeLocation: typeLocation === 'courte' ? 'courte' : 'longue', 
+      paraHotellerie: false, 
+      regime, 
+      caAnneeN2: 0 
+    })
     setStep('avis')
   }
 
@@ -48,12 +65,54 @@ export function StepQualification() {
         </div>
       </div>
 
-      <Field label="Début d'activité LMNP" hint="Année de votre 1ère déclaration" required>
-        <Select value={anneeDebut} onChange={e => setAnneeDebut(Number(e.target.value))}>
-          {Array.from({ length: 15 }, (_, i) => ANNEE_COURANTE - i - 1).map(a => (
-            <option key={a} value={a}>{a}</option>
+      <Field label="Nombre d'établissements" required>
+        <div className="grid grid-cols-1 gap-3">
+          {[
+            { v: false, title: 'Un seul avis CFE reçu', sub: 'Un seul bien ou plusieurs biens dans la même commune' },
+            { v: true, title: 'Plusieurs avis CFE reçus', sub: 'Biens situés dans différentes communes' },
+          ].map(opt => (
+            <label key={String(opt.v)} className={`flex items-start gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
+              multiEtablissements === opt.v ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="multi" 
+                checked={multiEtablissements === opt.v} 
+                onChange={() => { setMultiEtablissements(opt.v); setErreur(null) }} 
+                className="text-blue-600 mt-0.5" 
+              />
+              <div>
+                <div className="text-sm font-medium text-gray-800">{opt.title}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
+              </div>
+            </label>
           ))}
-        </Select>
+        </div>
+      </Field>
+
+      <Field label="Ancienneté de l'activité" required>
+        <div className="grid grid-cols-1 gap-3">
+          {[
+            { v: true, title: `Oui, activité commencée en ${ANNEE_SEUIL} ou avant`, sub: 'Éligible au plafonnement CFE' },
+            { v: false, title: `Non, activité commencée après ${ANNEE_SEUIL}`, sub: 'Exonération ou abattement de 50% applicable' },
+          ].map(opt => (
+            <label key={String(opt.v)} className={`flex items-start gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
+              activiteAvantSeuil === opt.v ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+            }`}>
+              <input 
+                type="radio" 
+                name="annee" 
+                checked={activiteAvantSeuil === opt.v} 
+                onChange={() => { setActiviteAvantSeuil(opt.v); setErreur(null) }} 
+                className="text-blue-600 mt-0.5" 
+              />
+              <div>
+                <div className="text-sm font-medium text-gray-800">{opt.title}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
+              </div>
+            </label>
+          ))}
+        </div>
       </Field>
 
       <Field label="Régime fiscal" required>
