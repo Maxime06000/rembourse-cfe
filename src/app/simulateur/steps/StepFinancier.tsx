@@ -85,7 +85,7 @@ export function StepFinancier() {
       )}
 
       {caTropFaible && (
-        <Callout type="error">
+        <Callout type="danger">
           <strong>Chiffre d'affaires ≤ 5 000 €</strong>
           <p className="mt-1">Avec un CA annuel ≤ 5 000 €, vous êtes normalement exonéré de cotisation minimum CFE. Si vous avez reçu un avis de CFE, il s'agit probablement d'une erreur. Contactez directement votre Service des Impôts des Entreprises (SIE) pour régulariser votre situation.</p>
           <p className="mt-2 text-sm">Le simulateur de plafonnement CFE ne s'applique pas dans votre cas.</p>
