@@ -7,15 +7,18 @@ import { Field, Input, Callout } from '@/components/FormElements'
 
 export function StepIdentite() {
   const store = useSimulation()
-  const { setStep, setIdentite, setResultat, regime } = store
+  const { setStep, setIdentite, setResultat, regime, avisCfe } = store
+
+  // Récupérer l'établissement principal
+  const etablissementPrincipal = avisCfe.find(a => a.estPrincipal)
 
   const [nom, setNom] = useState(store.nom)
   const [email, setEmail] = useState(store.email)
   const [telephone, setTelephone] = useState(store.telephone)
-  const [siret, setSiret] = useState(store.siret)
+  const [siret, setSiret] = useState(store.siret || etablissementPrincipal?.siret || '')
   const [numeroFiscal, setNumeroFiscal] = useState(store.numeroFiscal)
-  const [adresseBien, setAdresseBien] = useState(store.adresseBien)
-  const [ville, setVille] = useState(store.ville)
+  const [adresseBien, setAdresseBien] = useState(store.adresseBien || etablissementPrincipal?.adresseEtablissement || '')
+  const [ville, setVille] = useState(store.ville || etablissementPrincipal?.commune || '')
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
 
   function handleSubmit(e: React.FormEvent) {
