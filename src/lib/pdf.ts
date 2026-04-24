@@ -67,14 +67,44 @@ function fillCadreBMulti(form: ReturnType<PDFDocument['getForm']>, avisCfe: Avis
   // Remplir jusqu'à 3 lignes
   for (let i = 0; i < Math.min(avisCfe.length, maxLignes); i++) {
     const avis = avisCfe[i]
-    const prefix = i === 0 ? 'b' : `b${i+1}_`
     
-    // Département, adresse, SIRET, rôle, montant CFE
-    fill(form, `${prefix}1`, avis.departement)
-    fill(form, `${prefix}2`, avis.adresseEtablissement)
-    fill(form, `${prefix}3`, avis.siret.replace(/\s/g, ''))
-    fill(form, `${prefix}4`, avis.numeroRole)
-    fill(form, `${prefix}5`, r(avis.montantCfe))
+    // Essayer plusieurs variantes de nommage selon les lignes
+    if (i === 0) {
+      // Première ligne : b1, b2, b3, b4, b5
+      fill(form, 'b1', avis.departement)
+      fill(form, 'b2', avis.adresseEtablissement)
+      fill(form, 'b3', avis.siret.replace(/\s/g, ''))
+      fill(form, 'b4', avis.numeroRole)
+      fill(form, 'b5', r(avis.montantCfe))
+    } else if (i === 1) {
+      // Deuxième ligne : essayer b1_2, b2_2, etc. OU b1b, b2b, etc.
+      fill(form, 'b1_2', avis.departement)
+      fill(form, 'b2_2', avis.adresseEtablissement)
+      fill(form, 'b3_2', avis.siret.replace(/\s/g, ''))
+      fill(form, 'b4_2', avis.numeroRole)
+      fill(form, 'b5_2', r(avis.montantCfe))
+      
+      // Fallback avec suffixe b
+      fill(form, 'b1b', avis.departement)
+      fill(form, 'b2b', avis.adresseEtablissement)
+      fill(form, 'b3b', avis.siret.replace(/\s/g, ''))
+      fill(form, 'b4b', avis.numeroRole)
+      fill(form, 'b5b', r(avis.montantCfe))
+    } else if (i === 2) {
+      // Troisième ligne : essayer b1_3, b2_3, etc. OU b1c, b2c, etc.
+      fill(form, 'b1_3', avis.departement)
+      fill(form, 'b2_3', avis.adresseEtablissement)
+      fill(form, 'b3_3', avis.siret.replace(/\s/g, ''))
+      fill(form, 'b4_3', avis.numeroRole)
+      fill(form, 'b5_3', r(avis.montantCfe))
+      
+      // Fallback avec suffixe c
+      fill(form, 'b1c', avis.departement)
+      fill(form, 'b2c', avis.adresseEtablissement)
+      fill(form, 'b3c', avis.siret.replace(/\s/g, ''))
+      fill(form, 'b4c', avis.numeroRole)
+      fill(form, 'b5c', r(avis.montantCfe))
+    }
   }
 
   // Si > 3 CFE : ajouter mention

@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
         email: body.email,
         telephone: body.telephone || null,
         siret: body.siret,
-        numero_fiscal: body.numeroFiscal,
         reference_avis: body.referenceAvis,
         numero_role: body.numeroRole,
         adresse_bien: body.adresseBien,

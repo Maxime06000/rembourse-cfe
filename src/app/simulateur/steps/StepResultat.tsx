@@ -43,7 +43,6 @@ export function StepResultat() {
           email: store.email,
           telephone: store.telephone,
           siret: store.siret,
-          numeroFiscal: store.numeroFiscal,
           adresseBien: store.adresseBien,
           ville: store.ville,
           departement: store.departement,

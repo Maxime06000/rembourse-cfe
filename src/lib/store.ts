@@ -41,7 +41,6 @@ interface SimulationState {
   email: string
   telephone: string
   siret: string
-  numeroFiscal: string
   adresseBien: string
   ville: string
   departement: string
@@ -90,7 +89,6 @@ const initialState = {
   email: '',
   telephone: '',
   siret: '',
-  numeroFiscal: '',
   adresseBien: '',
   ville: '',
   departement: '',

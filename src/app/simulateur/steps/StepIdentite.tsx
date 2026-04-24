@@ -13,7 +13,6 @@ export function StepIdentite() {
   const [email, setEmail] = useState(store.email)
   const [telephone, setTelephone] = useState(store.telephone)
   const [siret, setSiret] = useState(store.siret)
-  const [numeroFiscal, setNumeroFiscal] = useState(store.numeroFiscal)
   const [adresseBien, setAdresseBien] = useState(store.adresseBien)
   const [ville, setVille] = useState(store.ville)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
@@ -60,14 +59,13 @@ export function StepIdentite() {
     if (!nom.trim()) errs.nom = 'Nom requis'
     if (!email.includes('@')) errs.email = 'Email invalide'
     if (siret.replace(/\s/g, '').length !== 14) errs.siret = 'SIRET doit contenir 14 chiffres'
-    if (!numeroFiscal.trim()) errs.numeroFiscal = 'Numéro fiscal requis'
     if (!adresseBien.trim()) errs.adresseBien = 'Adresse requise'
     if (!ville.trim()) errs.ville = 'Ville requise'
 
     if (Object.keys(errs).length > 0) { setErreurs(errs); return }
 
     setErreurs({})
-    setIdentite({ nom, email, telephone, siret: siret.replace(/\s/g, ''), numeroFiscal, adresseBien, ville })
+    setIdentite({ nom, email, telephone, siret: siret.replace(/\s/g, ''), adresseBien, ville })
 
     const donnees = regime === 'reel'
       ? {
@@ -121,10 +119,6 @@ export function StepIdentite() {
           <Input value={siret} onChange={e => setSiret(e.target.value)} placeholder="842 659 450 00014" error={!!erreurs.siret} />
         </Field>
       </div>
-
-      <Field label="Numéro fiscal" hint="Cadre 'Vos références' de l'avis CFE" required error={erreurs.numeroFiscal}>
-        <Input value={numeroFiscal} onChange={e => setNumeroFiscal(e.target.value)} placeholder="842659450 00014" error={!!erreurs.numeroFiscal} />
-      </Field>
 
       <Field label="Adresse du bien (établissement principal)" required error={erreurs.adresseBien}>
         <Input value={adresseBien} onChange={e => setAdresseBien(e.target.value)} placeholder="24B rue Smolett" error={!!erreurs.adresseBien} />
