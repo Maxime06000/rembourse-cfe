@@ -22,19 +22,36 @@ export function StepIdentite() {
   useEffect(() => {
     const etablissementPrincipal = avisCfe.find(a => a.estPrincipal)
     
+    console.log('=== DEBUG StepIdentite ===')
+    console.log('avisCfe:', avisCfe)
+    console.log('etablissementPrincipal:', etablissementPrincipal)
+    console.log('store.siret:', store.siret)
+    console.log('store.ville:', store.ville)
+    console.log('store.adresseBien:', store.adresseBien)
+    
     if (etablissementPrincipal) {
-      // Pré-remplir SEULEMENT si le store est vide (pas encore rempli par l'utilisateur)
-      if (store.siret.trim() === '' && etablissementPrincipal.siret) {
+      console.log('Principal SIRET:', etablissementPrincipal.siret)
+      console.log('Principal Commune:', etablissementPrincipal.commune)
+      console.log('Principal Adresse:', etablissementPrincipal.adresseEtablissement)
+      
+      // Utiliser TOUJOURS les valeurs du principal (pas seulement si store vide)
+      if (etablissementPrincipal.siret) {
+        console.log('→ Pré-remplissage SIRET:', etablissementPrincipal.siret)
         setSiret(etablissementPrincipal.siret)
       }
-      if (store.ville.trim() === '' && etablissementPrincipal.commune) {
+      if (etablissementPrincipal.commune) {
+        console.log('→ Pré-remplissage Ville:', etablissementPrincipal.commune)
         setVille(etablissementPrincipal.commune)
       }
-      if (store.adresseBien.trim() === '' && etablissementPrincipal.adresseEtablissement) {
+      if (etablissementPrincipal.adresseEtablissement) {
+        console.log('→ Pré-remplissage Adresse:', etablissementPrincipal.adresseEtablissement)
         setAdresseBien(etablissementPrincipal.adresseEtablissement)
       }
+    } else {
+      console.log('❌ Aucun établissement principal trouvé')
     }
-  }, [avisCfe, store.siret, store.ville, store.adresseBien])
+    console.log('========================')
+  }, [avisCfe])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
