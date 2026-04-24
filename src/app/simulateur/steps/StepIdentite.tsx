@@ -9,47 +9,32 @@ export function StepIdentite() {
   const store = useSimulation()
   const { setStep, setIdentite, setResultat, regime, avisCfe } = store
 
-  // Récupérer l'établissement principal
-  const etablissementPrincipal = avisCfe.find(a => a.estPrincipal)
-
   const [nom, setNom] = useState(store.nom)
   const [email, setEmail] = useState(store.email)
   const [telephone, setTelephone] = useState(store.telephone)
-  
-  // Utiliser l'établissement principal si store est vide
-  const [siret, setSiret] = useState(() => {
-    return store.siret && store.siret.trim() !== '' 
-      ? store.siret 
-      : (etablissementPrincipal?.siret || '')
-  })
+  const [siret, setSiret] = useState(store.siret)
   const [numeroFiscal, setNumeroFiscal] = useState(store.numeroFiscal)
-  const [adresseBien, setAdresseBien] = useState(() => {
-    return store.adresseBien && store.adresseBien.trim() !== '' 
-      ? store.adresseBien 
-      : (etablissementPrincipal?.adresseEtablissement || '')
-  })
-  const [ville, setVille] = useState(() => {
-    return store.ville && store.ville.trim() !== '' 
-      ? store.ville 
-      : (etablissementPrincipal?.commune || '')
-  })
+  const [adresseBien, setAdresseBien] = useState(store.adresseBien)
+  const [ville, setVille] = useState(store.ville)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
 
-  // Mettre à jour quand l'établissement principal change
+  // Pré-remplir depuis l'établissement principal
   useEffect(() => {
+    const etablissementPrincipal = avisCfe.find(a => a.estPrincipal)
+    
     if (etablissementPrincipal) {
-      // Ne mettre à jour que si le champ local est vide
-      if (!siret || siret.trim() === '') {
-        setSiret(etablissementPrincipal.siret || '')
+      // Pré-remplir SEULEMENT si le store est vide (pas encore rempli par l'utilisateur)
+      if (store.siret.trim() === '' && etablissementPrincipal.siret) {
+        setSiret(etablissementPrincipal.siret)
       }
-      if (!ville || ville.trim() === '') {
-        setVille(etablissementPrincipal.commune || '')
+      if (store.ville.trim() === '' && etablissementPrincipal.commune) {
+        setVille(etablissementPrincipal.commune)
       }
-      if (!adresseBien || adresseBien.trim() === '') {
-        setAdresseBien(etablissementPrincipal.adresseEtablissement || '')
+      if (store.adresseBien.trim() === '' && etablissementPrincipal.adresseEtablissement) {
+        setAdresseBien(etablissementPrincipal.adresseEtablissement)
       }
     }
-  }, [etablissementPrincipal?.id])
+  }, [avisCfe, store.siret, store.ville, store.adresseBien])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
