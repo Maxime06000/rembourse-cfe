@@ -220,21 +220,32 @@ function fillMicroForm(
     fill(form, 'b2', `${sim.adresse_bien}, ${sim.ville}`)
     fill(form, 'b3', sim.siret.replace(/\s/g, ''))
     fill(form, 'b4', sim.numero_role)
-    fill(form, 'b5', r(totalCfe))
+    // b5 = colonne 5 reste vide (ne pas mettre le montant CFE ici)
   }
   
-  fill(form, 'b25', r(totalCfe))
-  fill(form, 'b27', r(totalCfe))
+  // Ligne 3 : Montant des cotisations à plafonner (case du dessous, surligné en jaune sur l'image)
+  fill(form, 'b22', r(totalCfe))
 
-  fill(form, 'c1', r(recettes))
-  fill(form, 'c2', '0')
-  fill(form, 'c7', r(va))
-  fill(form, 'c8', r(sim.plafonnement))
+  // ── SECTION C — Détermination de la valeur ajoutée ──
+  fill(form, 'c4', r(recettes))      // Ligne 4 : RECETTES TOTALES (en vert sur l'image)
+  fill(form, 'c5', '0')               // Ligne 5 : ACHATS (généralement 0 pour LMNP)
+  fill(form, 'c7', r(va))             // Ligne 7 : VALEUR AJOUTÉE PRODUITE (1er TOTAL - 2e TOTAL)
 
+  // ── SECTION D — Calcul du plafonnement ──
+  fill(form, 'd8', r(sim.plafonnement))  // Ligne 8 : Plafonnement (en vert sur l'image)
+
+  // ── SECTION E — Dégrèvement demandé ──
   const degrevementBrut = totalCfe - sim.plafonnement
-  fill(form, 'c9', r(degrevementBrut))
-  fill(form, 'c10', r(cotisationMin))
+  fill(form, 'e9', r(degrevementBrut))   // Ligne 9 : (Ligne 3) - (Ligne 8)
+
+  // ── SECTION F — Limitation du dégrèvement ──
+  fill(form, 'f10', r(cotisationMin))    // Ligne 10 : Cotisation minimum
   const maxDeg = totalCfe - cotisationMin
-  fill(form, 'c11', r(maxDeg))
-  fill(form, 'c12', r(Math.min(degrevementBrut, maxDeg)))
+  fill(form, 'f11', r(maxDeg))           // Ligne 11 : Montant maximum (Ligne 3 - Ligne 10)
+  
+  // Ligne 12 ou 13 selon si assujetti ou non à cotisation minimum
+  // Pour LMNP en micro-BIC, généralement assujetti (ligne 13)
+  fill(form, 'f13', r(Math.min(degrevementBrut, maxDeg)))
+  
+  // ── SECTION G — Non remplie (inutile pour micro-BIC) ──
 }
