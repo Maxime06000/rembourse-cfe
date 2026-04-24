@@ -213,41 +213,41 @@ function fillMicroForm(
     ? avisCfe.find(a => a.estPrincipal)!.cotisationMin 
     : sim.cfe_ligne189
 
-  // ── SECTION B — Récapitulation CFE (lignes 1-3) ──
+  // ── SECTION B — Récapitulation CFE ──
   if (avisCfe) {
     fillCadreBMulti(form, avisCfe)
   } else {
     fill(form, 'b2', `${sim.adresse_bien}, ${sim.ville}`)
     fill(form, 'b3', sim.siret.replace(/\s/g, ''))
     fill(form, 'b4', sim.numero_role)
-    fill(form, 'b5', r(totalCfe))     // Colonne 5 : Montant brut CFE
-    fill(form, 'b6', '0')              // Colonne 6 : Dégrèvements obtenus (généralement 0)
-    fill(form, 'b7', '0')              // Colonne 7 : Dégrèvements calculés (généralement 0)
+    fill(form, 'b5', r(totalCfe))
+    fill(form, 'b6', '0')
+    fill(form, 'b7', '0')
   }
   
-  // ── SECTION B — Ligne 3 et Calculs (b26-b39) ──
-  // TOUT le formulaire micro-BIC utilise uniquement la section B !
+  fill(form, 'b26', r(totalCfe))  // Total CFE (ligne 1 TOTAUX)
   
-  fill(form, 'b26', r(totalCfe))      // Ligne 3 : Montant des cotisations à plafonner
-  fill(form, 'b27', r(recettes))      // Ligne 4 : RECETTES TOTALES (Section C conceptuellement)
+  // ── SECTION C — Détermination VA ──
+  fill(form, 'c4', r(recettes))   // Ligne 4: Recettes totales
+  fill(form, 'c5', '0')            // Ligne 5: Achats
+  fill(form, 'c6', '0')            // Ligne 6: Rétrocessions
+  fill(form, 'c7', r(va))          // Ligne 7: VA produite
   
-  // Calculs intermédiaires (Section C/D conceptuellement, mais champs en B)
-  fill(form, 'b32', r(recettes))      // 1er TOTAL (recettes)
-  fill(form, 'b33', '0')               // 2e TOTAL : ACHATS (généralement 0 pour LMNP)
-  fill(form, 'b34', r(cotisationMin))  // Cotisation minimum
-  fill(form, 'b35', r(va))             // VA produite (ou VA × 80%?)
-  fill(form, 'b36', r(sim.plafonnement)) // Plafonnement calculé (Ligne 8 Section D)
+  // ── SECTION D — Plafonnement ──
+  fill(form, 'd8', r(sim.plafonnement))  // Ligne 8: Plafonnement (Recettes × 80% × taux)
   
-  // Dégrèvements (Section E/F conceptuellement)
+  // ── SECTION E — Dégrèvement demandé ──
   const degrevementBrut = Math.max(0, totalCfe - sim.plafonnement)
-  fill(form, 'b37', r(degrevementBrut)) // Dégrèvement demandé (Ligne 9)
+  fill(form, 'e9a', r(totalCfe))         // Ligne 9 gauche: CFE
+  fill(form, 'e9b', r(sim.plafonnement)) // Ligne 9 milieu: Plafonnement
+  fill(form, 'e9c', r(degrevementBrut))  // Ligne 9 droite: Différence
   
+  // ── SECTION F — Limitation ──
+  fill(form, 'f10', r(cotisationMin))    // Ligne 10: Cotisation minimum
   const maxDeg = Math.max(0, totalCfe - cotisationMin)
-  fill(form, 'b38', r(maxDeg))          // Montant maximum dégrèvement (Ligne 11)
+  fill(form, 'f11', r(maxDeg))           // Ligne 11: CFE - Cotis min
   
+  // Ligne 13: Dégrèvement final (assujetti cotis min)
   const degrevementFinal = Math.min(degrevementBrut, maxDeg)
-  fill(form, 'b39', r(degrevementFinal)) // Dégrèvement final (Ligne 13)
-  
-  // ── SECTIONS C, D, E, F, G — Non utilisées pour micro-BIC ──
-  // Le formulaire micro-BIC consolide tout dans la section B
+  fill(form, 'f13', r(degrevementFinal))
 }
