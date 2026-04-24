@@ -16,34 +16,6 @@ export async function genererAnnexeCFE(params: {
   const totalCfe = avisCfe.reduce((sum, a) => sum + a.montantCfe, 0)
   const principal = avisCfe.find(a => a.estPrincipal)
 
-  // Créer les lignes de données
-  const dataRows = avisCfe.map(avis => new TableRow({
-    children: [
-      new TableCell({ children: [new Paragraph(avis.departement || '')] }),
-      new TableCell({ children: [new Paragraph(avis.adresseEtablissement || avis.commune || '')] }),
-      new TableCell({ children: [new Paragraph(avis.siret || '')] }),
-      new TableCell({ children: [new Paragraph(avis.numeroRole || '')] }),
-      new TableCell({ 
-        children: [new Paragraph({ 
-          text: `${Math.round(avis.montantCfe).toLocaleString('fr-FR')} €`,
-          alignment: AlignmentType.RIGHT 
-        })] 
-      }),
-      new TableCell({ 
-        children: [new Paragraph({ 
-          text: `${Math.round(avis.cotisationMin).toLocaleString('fr-FR')} €`,
-          alignment: AlignmentType.RIGHT 
-        })] 
-      }),
-      new TableCell({ 
-        children: [new Paragraph({ 
-          text: avis.estPrincipal ? '⭐' : '',
-          alignment: AlignmentType.CENTER 
-        })] 
-      }),
-    ]
-  }))
-
   // Ligne header
   const headerRow = new TableRow({
     tableHeader: true,
@@ -121,6 +93,42 @@ export async function genererAnnexeCFE(params: {
     ]
   })
 
+  // Créer toutes les lignes dans un seul array
+  const allRows = [headerRow]
+  
+  // Ajouter les lignes de données
+  for (const avis of avisCfe) {
+    allRows.push(new TableRow({
+      children: [
+        new TableCell({ children: [new Paragraph(avis.departement || '')] }),
+        new TableCell({ children: [new Paragraph(avis.adresseEtablissement || avis.commune || '')] }),
+        new TableCell({ children: [new Paragraph(avis.siret || '')] }),
+        new TableCell({ children: [new Paragraph(avis.numeroRole || '')] }),
+        new TableCell({ 
+          children: [new Paragraph({ 
+            text: `${Math.round(avis.montantCfe)} €`,
+            alignment: AlignmentType.RIGHT 
+          })] 
+        }),
+        new TableCell({ 
+          children: [new Paragraph({ 
+            text: `${Math.round(avis.cotisationMin)} €`,
+            alignment: AlignmentType.RIGHT 
+          })] 
+        }),
+        new TableCell({ 
+          children: [new Paragraph({ 
+            text: avis.estPrincipal ? '⭐' : '',
+            alignment: AlignmentType.CENTER 
+          })] 
+        }),
+      ]
+    }))
+  }
+  
+  // Ajouter la ligne total
+  allRows.push(totalRow)
+
   const doc = new Document({
     sections: [{
       children: [
@@ -149,7 +157,7 @@ export async function genererAnnexeCFE(params: {
 
         new Table({
           width: { size: 100, type: WidthType.PERCENTAGE },
-          rows: [headerRow, ...dataRows, totalRow],
+          rows: allRows,
           borders: {
             top: { style: BorderStyle.SINGLE, size: 1 },
             bottom: { style: BorderStyle.SINGLE, size: 1 },

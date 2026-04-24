@@ -10,6 +10,11 @@ interface SimulationData {
   degrevement_reel: number
 }
 
+// Helper pour formater les nombres sans espace insécable
+function formatMontant(num: number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
 function numeroFacture(): string {
   const now = new Date()
   const yy = now.getFullYear().toString().slice(-2)
@@ -32,7 +37,8 @@ export async function genererFacture(sim: SimulationData): Promise<Buffer> {
   const gray = rgb(0.5, 0.5, 0.5)
   const lightGray = rgb(0.95, 0.95, 0.95)
 
-  const today = new Date().toLocaleDateString('fr-FR')
+  const now = new Date()
+  const today = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`
   const numFacture = numeroFacture()
   const commission = Math.round(sim.degrevement_reel * 0.20)
 
@@ -89,15 +95,15 @@ export async function genererFacture(sim: SimulationData): Promise<Buffer> {
   y -= 30
   page.drawRectangle({ x: 40, y: y - 8, width: width - 80, height: 44, color: lightGray })
   page.drawText(`Génération du dossier de dégrèvement CFE ${sim.annee_cfe}`, { x: 50, y: y + 12, size: 10, font: fontBold, color: dark })
-  page.drawText(`Commission 20% sur dégrèvement estimé de ${sim.degrevement_reel.toLocaleString('fr-FR')} €`, { x: 50, y: y - 2, size: 9, font, color: gray })
-  page.drawText(`${commission.toLocaleString('fr-FR')} €`, { x: width - 120, y: y + 12, size: 11, font: fontBold, color: dark })
+  page.drawText(`Commission 20% sur dégrèvement estimé de ${formatMontant(sim.degrevement_reel)} €`, { x: 50, y: y - 2, size: 9, font, color: gray })
+  page.drawText(`${formatMontant(commission)} €`, { x: width - 120, y: y + 12, size: 11, font: fontBold, color: dark })
 
   // ── Total ──
   y -= 50
   page.drawLine({ start: { x: 40, y: y + 10 }, end: { x: width - 40, y: y + 10 }, thickness: 1, color: rgb(0.85,0.85,0.85) })
   page.drawText('TVA non applicable — art. 293B du CGI', { x: 50, y, size: 9, font, color: gray })
   page.drawText('TOTAL TTC', { x: width - 200, y, size: 12, font: fontBold, color: dark })
-  page.drawText(`${commission.toLocaleString('fr-FR')} €`, { x: width - 110, y, size: 14, font: fontBold, color: blue })
+  page.drawText(`${formatMontant(commission)} €`, { x: width - 110, y, size: 14, font: fontBold, color: blue })
 
   // ── Mentions légales ──
   y -= 60
