@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSimulation } from '@/lib/store'
 import { calculerDegrevement, calculerDegrevementMultiCFE } from '@/lib/calcul'
 import { Field, Input, Callout } from '@/components/FormElements'
@@ -15,11 +15,27 @@ export function StepIdentite() {
   const [nom, setNom] = useState(store.nom)
   const [email, setEmail] = useState(store.email)
   const [telephone, setTelephone] = useState(store.telephone)
-  const [siret, setSiret] = useState(store.siret || etablissementPrincipal?.siret || '')
+  const [siret, setSiret] = useState(store.siret)
   const [numeroFiscal, setNumeroFiscal] = useState(store.numeroFiscal)
-  const [adresseBien, setAdresseBien] = useState(store.adresseBien || etablissementPrincipal?.adresseEtablissement || '')
-  const [ville, setVille] = useState(store.ville || etablissementPrincipal?.commune || '')
+  const [adresseBien, setAdresseBien] = useState(store.adresseBien)
+  const [ville, setVille] = useState(store.ville)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
+
+  // Pré-remplir depuis l'établissement principal quand il change
+  useEffect(() => {
+    if (etablissementPrincipal) {
+      // Ne pré-remplir que si les champs sont vides
+      if (!store.adresseBien && etablissementPrincipal.adresseEtablissement) {
+        setAdresseBien(etablissementPrincipal.adresseEtablissement)
+      }
+      if (!store.ville && etablissementPrincipal.commune) {
+        setVille(etablissementPrincipal.commune)
+      }
+      if (!store.siret && etablissementPrincipal.siret) {
+        setSiret(etablissementPrincipal.siret)
+      }
+    }
+  }, [etablissementPrincipal?.id]) // Se déclenche quand le principal change
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
