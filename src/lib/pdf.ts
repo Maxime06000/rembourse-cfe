@@ -58,6 +58,20 @@ function fillCadreBSingle(form: ReturnType<PDFDocument['getForm']>, sim: Simulat
  * Remplir cadre B - nouveau système multi-CFE
  * Max 3 lignes dans le formulaire PDF
  * Si > 3 CFE : mention "voir annexe jointe"
+ * 
+ * Nommage des champs :
+ * Ligne 1 : b1-b7 (colonnes 1-7)
+ * Ligne 2 : b8-b14 (colonnes 1-7)
+ * Ligne 3 : b15-b21 (colonnes 1-7)
+ * 
+ * Colonnes à remplir :
+ * - Col 1 : Code département
+ * - Col 2 : Adresse établissement
+ * - Col 3 : N° SIRET
+ * - Col 4 : N° de rôle
+ * - Col 5 : Montant brut CFE
+ * - Col 6 : (vide - ne pas remplir)
+ * - Col 7 : (vide - ne pas remplir)
  */
 function fillCadreBMulti(form: ReturnType<PDFDocument['getForm']>, avisCfe: AvisCfe[]) {
   const maxLignes = 3
@@ -68,43 +82,16 @@ function fillCadreBMulti(form: ReturnType<PDFDocument['getForm']>, avisCfe: Avis
   for (let i = 0; i < Math.min(avisCfe.length, maxLignes); i++) {
     const avis = avisCfe[i]
     
-    // Essayer plusieurs variantes de nommage selon les lignes
-    if (i === 0) {
-      // Première ligne : b1, b2, b3, b4, b5
-      fill(form, 'b1', avis.departement)
-      fill(form, 'b2', avis.adresseEtablissement)
-      fill(form, 'b3', avis.siret.replace(/\s/g, ''))
-      fill(form, 'b4', avis.numeroRole)
-      fill(form, 'b5', r(avis.montantCfe))
-    } else if (i === 1) {
-      // Deuxième ligne : essayer b1_2, b2_2, etc. OU b1b, b2b, etc.
-      fill(form, 'b1_2', avis.departement)
-      fill(form, 'b2_2', avis.adresseEtablissement)
-      fill(form, 'b3_2', avis.siret.replace(/\s/g, ''))
-      fill(form, 'b4_2', avis.numeroRole)
-      fill(form, 'b5_2', r(avis.montantCfe))
-      
-      // Fallback avec suffixe b
-      fill(form, 'b1b', avis.departement)
-      fill(form, 'b2b', avis.adresseEtablissement)
-      fill(form, 'b3b', avis.siret.replace(/\s/g, ''))
-      fill(form, 'b4b', avis.numeroRole)
-      fill(form, 'b5b', r(avis.montantCfe))
-    } else if (i === 2) {
-      // Troisième ligne : essayer b1_3, b2_3, etc. OU b1c, b2c, etc.
-      fill(form, 'b1_3', avis.departement)
-      fill(form, 'b2_3', avis.adresseEtablissement)
-      fill(form, 'b3_3', avis.siret.replace(/\s/g, ''))
-      fill(form, 'b4_3', avis.numeroRole)
-      fill(form, 'b5_3', r(avis.montantCfe))
-      
-      // Fallback avec suffixe c
-      fill(form, 'b1c', avis.departement)
-      fill(form, 'b2c', avis.adresseEtablissement)
-      fill(form, 'b3c', avis.siret.replace(/\s/g, ''))
-      fill(form, 'b4c', avis.numeroRole)
-      fill(form, 'b5c', r(avis.montantCfe))
-    }
+    // Calcul du décalage : ligne 1 = 0, ligne 2 = 7, ligne 3 = 14
+    const offset = i * 7
+    
+    // Colonnes 1-5 uniquement (pas 6 et 7)
+    fill(form, `b${1 + offset}`, avis.departement)                    // Col 1 : Département
+    fill(form, `b${2 + offset}`, avis.adresseEtablissement)          // Col 2 : Adresse
+    fill(form, `b${3 + offset}`, avis.siret.replace(/\s/g, ''))      // Col 3 : SIRET
+    fill(form, `b${4 + offset}`, avis.numeroRole)                     // Col 4 : Rôle
+    fill(form, `b${5 + offset}`, r(avis.montantCfe))                  // Col 5 : Montant CFE
+    // b${6 + offset} et b${7 + offset} restent vides (colonnes 6 et 7)
   }
 
   // Si > 3 CFE : ajouter mention
@@ -113,7 +100,7 @@ function fillCadreBMulti(form: ReturnType<PDFDocument['getForm']>, avisCfe: Avis
     fill(form, 'b_mention', `+ ${remaining} établissement(s) supplémentaire(s) - voir annexe jointe`)
   }
 
-  // Total CFE (col 5)
+  // Total CFE (b22 = ligne TOTAUX, col 5)
   fill(form, 'b22', r(totalCfe))
 
   // Ligne 2 : cotisation minimum (établissement principal uniquement)
