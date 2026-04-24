@@ -81,35 +81,28 @@ function fillCadreBMulti(form: ReturnType<PDFDocument['getForm']>, avisCfe: Avis
   // Remplir jusqu'à 3 lignes
   for (let i = 0; i < Math.min(avisCfe.length, maxLignes); i++) {
     const avis = avisCfe[i]
-    
-    // Calcul du décalage : ligne 1 = 0, ligne 2 = 7, ligne 3 = 14
     const offset = i * 7
     
-    // Colonnes 1-5 uniquement (pas 6 et 7)
-    fill(form, `b${1 + offset}`, avis.departement)                    // Col 1 : Département
-    fill(form, `b${2 + offset}`, avis.adresseEtablissement)          // Col 2 : Adresse
-    fill(form, `b${3 + offset}`, avis.siret.replace(/\s/g, ''))      // Col 3 : SIRET
-    fill(form, `b${4 + offset}`, avis.numeroRole)                     // Col 4 : Rôle
-    fill(form, `b${5 + offset}`, r(avis.montantCfe))                  // Col 5 : Montant CFE
-    // b${6 + offset} et b${7 + offset} restent vides (colonnes 6 et 7)
+    // Adresse complète avec ville
+    const adresseComplete = avis.commune 
+      ? `${avis.adresseEtablissement}, ${avis.commune}`
+      : avis.adresseEtablissement
+    
+    fill(form, `b${1 + offset}`, avis.departement)
+    fill(form, `b${2 + offset}`, adresseComplete)
+    fill(form, `b${3 + offset}`, avis.siret.replace(/\s/g, ''))
+    fill(form, `b${4 + offset}`, avis.numeroRole)
+    fill(form, `b${5 + offset}`, r(avis.montantCfe))
   }
 
-  // Si > 3 CFE : ajouter mention
   if (avisCfe.length > maxLignes) {
     const remaining = avisCfe.length - maxLignes
     fill(form, 'b_mention', `+ ${remaining} établissement(s) supplémentaire(s) - voir annexe jointe`)
   }
 
-  // Total CFE (b22 = ligne TOTAUX, col 5)
   fill(form, 'b22', r(totalCfe))
-
-  // Ligne 2 : cotisation minimum (établissement principal uniquement)
-  fill(form, 'b24', r(principal.cotisationMin))
-
-  // Ligne 3 : montant à plafonner = total CFE
+  // b24 retiré - causait affichage 356 dans tableau
   fill(form, 'b25a', r(totalCfe))
-
-  // Ligne 4 : CVAE = 0
   fill(form, 'b26', '0')
 }
 
