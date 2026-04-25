@@ -45,6 +45,11 @@ export default function CGV() {
             En particulier, toute erreur dans les montants saisis (recettes, charges, montant CFE, SIRET)
             est de la seule responsabilité de l&apos;utilisateur et peut rendre la réclamation caduque.
           </p>
+          <p className="text-gray-600 mt-2">
+            En tout état de cause, si la responsabilité de l&apos;Éditeur devait être engagée,
+            le montant des indemnités ne pourra excéder le montant total payé par l&apos;Utilisateur
+            pour le service concerné.
+          </p>
         </section>
 
         <section>
