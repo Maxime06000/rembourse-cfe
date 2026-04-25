@@ -17,39 +17,13 @@ export function StepIdentite() {
   const [ville, setVille] = useState(store.ville)
   const [erreurs, setErreurs] = useState<Record<string, string>>({})
 
-  // Pré-remplir depuis l'établissement principal
   useEffect(() => {
     const etablissementPrincipal = avisCfe.find(a => a.estPrincipal)
-    
-    console.log('=== DEBUG StepIdentite ===')
-    console.log('avisCfe:', avisCfe)
-    console.log('etablissementPrincipal:', etablissementPrincipal)
-    console.log('store.siret:', store.siret)
-    console.log('store.ville:', store.ville)
-    console.log('store.adresseBien:', store.adresseBien)
-    
     if (etablissementPrincipal) {
-      console.log('Principal SIRET:', etablissementPrincipal.siret)
-      console.log('Principal Commune:', etablissementPrincipal.commune)
-      console.log('Principal Adresse:', etablissementPrincipal.adresseEtablissement)
-      
-      // Utiliser TOUJOURS les valeurs du principal (pas seulement si store vide)
-      if (etablissementPrincipal.siret) {
-        console.log('→ Pré-remplissage SIRET:', etablissementPrincipal.siret)
-        setSiret(etablissementPrincipal.siret)
-      }
-      if (etablissementPrincipal.commune) {
-        console.log('→ Pré-remplissage Ville:', etablissementPrincipal.commune)
-        setVille(etablissementPrincipal.commune)
-      }
-      if (etablissementPrincipal.adresseEtablissement) {
-        console.log('→ Pré-remplissage Adresse:', etablissementPrincipal.adresseEtablissement)
-        setAdresseBien(etablissementPrincipal.adresseEtablissement)
-      }
-    } else {
-      console.log('❌ Aucun établissement principal trouvé')
+      if (etablissementPrincipal.siret) setSiret(etablissementPrincipal.siret)
+      if (etablissementPrincipal.commune) setVille(etablissementPrincipal.commune)
+      if (etablissementPrincipal.adresseEtablissement) setAdresseBien(etablissementPrincipal.adresseEtablissement)
     }
-    console.log('========================')
   }, [avisCfe])
 
   function handleSubmit(e: React.FormEvent) {
@@ -97,6 +71,8 @@ export function StepIdentite() {
     setStep('resultat')
   }
 
+  const hasPrincipal = avisCfe.some(a => a.estPrincipal)
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <h2 className="font-semibold text-gray-900 text-base">Vos coordonnées</h2>
@@ -111,24 +87,44 @@ export function StepIdentite() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="Téléphone" hint="Optionnel">
-          <Input type="tel" value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06 47 69 63 82" />
-        </Field>
-        <Field label="N° SIRET" hint="14 chiffres" required error={erreurs.siret}>
-          <Input value={siret} onChange={e => setSiret(e.target.value)} placeholder="842 659 450 00014" error={!!erreurs.siret} />
-        </Field>
-      </div>
-
-      <Field label="Adresse du bien (établissement principal)" required error={erreurs.adresseBien}>
-        <Input value={adresseBien} onChange={e => setAdresseBien(e.target.value)} placeholder="24B rue Smolett" error={!!erreurs.adresseBien} />
+      <Field label="Téléphone" hint="Optionnel">
+        <Input type="tel" value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06 47 69 63 82" />
       </Field>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Field label="Ville" required error={erreurs.ville}>
-          <Input value={ville} onChange={e => setVille(e.target.value)} placeholder="Nice" error={!!erreurs.ville} />
-        </Field>
-      </div>
+      {hasPrincipal ? (
+        /* Résumé lecture seule — données issues de l'avis CFE */
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Établissement principal (issu de votre avis CFE)</p>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-700">
+            <div><span className="text-gray-400">SIRET</span><br /><span className="font-mono">{siret || '—'}</span></div>
+            <div><span className="text-gray-400">Ville</span><br />{ville || '—'}</div>
+            <div className="col-span-2"><span className="text-gray-400">Adresse</span><br />{adresseBien || '—'}</div>
+          </div>
+          <p className="text-xs text-gray-400 mt-1">
+            Une erreur ?{' '}
+            <button type="button" onClick={() => setStep('avis')} className="underline text-blue-500 hover:text-blue-600">
+              Retourner à l'étape précédente
+            </button>
+          </p>
+        </div>
+      ) : (
+        /* Saisie manuelle — cas mono-CFE sans upload */
+        <>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="N° SIRET" hint="14 chiffres" required error={erreurs.siret}>
+              <Input value={siret} onChange={e => setSiret(e.target.value)} placeholder="842 659 450 00014" error={!!erreurs.siret} />
+            </Field>
+          </div>
+          <Field label="Adresse du bien (établissement principal)" required error={erreurs.adresseBien}>
+            <Input value={adresseBien} onChange={e => setAdresseBien(e.target.value)} placeholder="24B rue Smolett" error={!!erreurs.adresseBien} />
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Ville" required error={erreurs.ville}>
+              <Input value={ville} onChange={e => setVille(e.target.value)} placeholder="Nice" error={!!erreurs.ville} />
+            </Field>
+          </div>
+        </>
+      )}
 
       <Callout type="info">
         Vos données sont utilisées uniquement pour générer votre dossier de réclamation. Elles ne sont pas partagées avec des tiers.
