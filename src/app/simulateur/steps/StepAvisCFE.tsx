@@ -131,7 +131,7 @@ export function StepAvisCFE() {
 
   function handleSaveManual() {
     // Validation
-    if (!formData.montantCfe || !formData.cotisationMin || !formData.numeroAvis || !formData.siret) {
+    if (!formData.montantCfe || !formData.cotisationMin || !formData.siret || !formData.commune) {
       alert('Veuillez remplir tous les champs obligatoires')
       return
     }
@@ -187,9 +187,9 @@ export function StepAvisCFE() {
     }
 
     // Vérifier que tous les avis ont les champs requis
-    const avisIncomplet = avisCfe.find(a => !a.montantCfe || !a.cotisationMin || !a.numeroAvis)
+    const avisIncomplet = avisCfe.find(a => !a.montantCfe || !a.cotisationMin || !a.commune)
     if (avisIncomplet) {
-      setErreurValidation('Tous les avis doivent avoir un montant CFE, cotisation min et référence')
+      setErreurValidation('Tous les avis doivent avoir un montant CFE, cotisation min et commune')
       return
     }
 
@@ -272,7 +272,6 @@ export function StepAvisCFE() {
                     type="number"
                     value={formData.montantCfe}
                     onChange={e => setFormData({ ...formData, montantCfe: e.target.value })}
-                    placeholder="922"
                   />
                 </Field>
                 <Field label="Cotisation minimum (ligne 189)" required>
@@ -280,7 +279,6 @@ export function StepAvisCFE() {
                     type="number"
                     value={formData.cotisationMin}
                     onChange={e => setFormData({ ...formData, cotisationMin: e.target.value })}
-                    placeholder="356"
                   />
                 </Field>
               </div>
@@ -290,14 +288,15 @@ export function StepAvisCFE() {
                   <Input
                     value={formData.siret}
                     onChange={e => setFormData({ ...formData, siret: e.target.value })}
-                    placeholder="84265945000014"
                   />
                 </Field>
-                <Field label="Département" required>
+                <Field label="Département" required hint="2 chiffres (ex: 06)">
                   <Input
                     value={formData.departement}
-                    onChange={e => setFormData({ ...formData, departement: e.target.value })}
-                    placeholder="06"
+                    onChange={e => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 3)
+                      setFormData({ ...formData, departement: val })
+                    }}
                     maxLength={3}
                   />
                 </Field>
@@ -307,34 +306,22 @@ export function StepAvisCFE() {
                 <Input
                   value={formData.adresseEtablissement}
                   onChange={e => setFormData({ ...formData, adresseEtablissement: e.target.value })}
-                  placeholder="24B RUE SMOLETT"
                 />
               </Field>
 
-              <Field label="Commune">
+              <Field label="Commune" required>
                 <Input
                   value={formData.commune}
                   onChange={e => setFormData({ ...formData, commune: e.target.value })}
-                  placeholder="NICE"
                 />
               </Field>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Référence avis" required>
-                  <Input
-                    value={formData.numeroAvis}
-                    onChange={e => setFormData({ ...formData, numeroAvis: e.target.value })}
-                    placeholder="2024XXXXXXXXX"
-                  />
-                </Field>
-                <Field label="N° de rôle">
-                  <Input
-                    value={formData.numeroRole}
-                    onChange={e => setFormData({ ...formData, numeroRole: e.target.value })}
-                    placeholder="092"
-                  />
-                </Field>
-              </div>
+              <Field label="N° de rôle">
+                <Input
+                  value={formData.numeroRole}
+                  onChange={e => setFormData({ ...formData, numeroRole: e.target.value })}
+                />
+              </Field>
             </div>
 
             <div className="flex gap-3 mt-6">
@@ -415,7 +402,7 @@ export function StepAvisCFE() {
                     )}
                     <div className="col-span-2">
                       <span className="text-gray-500">Référence avis :</span>{' '}
-                      <span className="font-mono text-xs">{avis.numeroAvis || 'Non renseignée'}</span>
+                      <span className="font-mono text-xs">{avis.siret}</span>
                     </div>
                   </div>
                 </div>

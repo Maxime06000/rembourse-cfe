@@ -112,12 +112,12 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
 
     <div style="background: #f9fafb; border-left: 4px solid #9ca3af; padding: 16px 20px; margin-bottom: 16px; border-radius: 0 8px 8px 0;">
       <p style="margin: 0 0 6px; font-weight: 700; font-size: 14px; color: #111;">Étape 2 — Signez le formulaire officiel joint</p>
-      <p style="margin: 0; font-size: 13px; color: #555;">Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} pré-rempli est joint à cet email en pièce jointe PDF. <strong>Signez-le avant de l'envoyer.</strong>${sim.avis_cfe && sim.avis_cfe.length > 3 ? '<br><br><strong>⚠️ Multi-établissements :</strong> Vous avez ' + sim.avis_cfe.length + ' établissements. Une annexe récapitulative (fichier .docx) est jointe. Ajoutez-la à votre envoi.' : ''}</p>
+      <p style="margin: 0; font-size: 13px; color: #555;">Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} pré-rempli est joint à cet email en pièce jointe PDF. <strong>Signez-le avant de l'envoyer.</strong></p>
     </div>
 
     <div style="background: #f9fafb; border-left: 4px solid #9ca3af; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
       <p style="margin: 0 0 6px; font-weight: 700; font-size: 14px; color: #111;">Étape 3 — Joignez vos pièces justificatives</p>
-      <p style="margin: 0; font-size: 13px; color: #555;">Ajoutez en pièces jointes : ${sim.avis_cfe && sim.avis_cfe.length > 1 ? 'tous vos avis CFE ' + sim.annee_cfe : 'votre avis CFE ' + sim.annee_cfe}${sim.regime === 'reel' ? ' et votre déclaration 2033-B' : ''}.</p>
+      <p style="margin: 0; font-size: 13px; color: #555;">Ajoutez en pièces jointes : ${sim.avis_cfe && sim.avis_cfe.length > 1 ? 'tous vos avis CFE ' + sim.annee_cfe : 'votre avis CFE ' + sim.annee_cfe}${sim.regime === 'reel' ? ' et votre déclaration 2033-B' : ''}.${sim.avis_cfe && sim.avis_cfe.length > 3 ? '<br><br><strong>⚠️ Multi-établissements :</strong> Vous avez ' + sim.avis_cfe.length + ' établissements. Une annexe récapitulative (fichier .docx) est jointe à cet email. Ajoutez-la également à votre envoi.' : ''}</p>
     </div>
 
     <div style="background: #f9fafb; border-left: 4px solid #9ca3af; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
