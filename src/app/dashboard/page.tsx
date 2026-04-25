@@ -22,6 +22,7 @@ interface Simulation {
   documents_sent: boolean
   adresse_bien: string
   ville: string
+  avis_cfe?: { montant_cfe: number; est_principal: boolean; cotisation_min: number }[]
 }
 
 const ADMIN_TOKEN = process.env.NEXT_PUBLIC_DASHBOARD_TOKEN || 'rembourse2026'
@@ -39,7 +40,7 @@ export default function Dashboard() {
     setLoading(true)
     const { data } = await supabase
       .from('simulations')
-      .select('*')
+      .select('*, avis_cfe(montant_cfe, est_principal, cotisation_min)')
       .order('created_at', { ascending: false })
       .limit(100)
     setSimulations(data || [])
@@ -188,7 +189,15 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3 font-medium text-gray-900">{sim.nom}</td>
                       <td className="px-4 py-3 text-gray-500">{sim.email}</td>
-                      <td className="px-4 py-3 text-gray-900">{sim.cfe_ligne25?.toLocaleString('fr-FR')} €</td>
+                      <td className="px-4 py-3 text-gray-900">
+                        {(sim.avis_cfe && sim.avis_cfe.length > 0
+                          ? sim.avis_cfe.reduce((s, a) => s + a.montant_cfe, 0)
+                          : sim.cfe_ligne25
+                        )?.toLocaleString('fr-FR')} €
+                        {sim.avis_cfe && sim.avis_cfe.length > 1 && (
+                          <span className="ml-1 text-xs text-blue-500">({sim.avis_cfe.length} étab.)</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 font-medium text-green-600">{sim.degrevement_reel?.toLocaleString('fr-FR')} €</td>
                       <td className="px-4 py-3 font-medium text-purple-600">
                         {Math.round((sim.degrevement_reel || 0) * 0.2).toLocaleString('fr-FR')} €

@@ -23,11 +23,36 @@ export async function POST(req: NextRequest) {
 
   if (!sim) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const { subject, html } = genererEmailConfirmation(sim)
+  // Récupérer les avis CFE liés (multi-établissements)
+  const { data: avisCfeRows } = await supabaseAdmin
+    .from('avis_cfe')
+    .select('*')
+    .eq('simulation_id', simulationId)
+    .order('est_principal', { ascending: false })
+
+  // Mapper vers le format attendu par pdf.ts
+  const avis_cfe = (avisCfeRows ?? []).map(a => ({
+    montantCfe: a.montant_cfe,
+    cotisationMin: a.cotisation_min,
+    ligne9: a.ligne9,
+    numeroAvis: a.numero_avis,
+    numeroRole: a.numero_role,
+    departement: a.departement,
+    adresseEtablissement: a.adresse_etablissement,
+    siret: a.siret,
+    estPrincipal: a.est_principal,
+    nomRedevable: a.nom_redevable,
+    commune: a.commune,
+    lieuImposition: a.lieu_imposition,
+  }))
+
+  const simAvecAvis = { ...sim, avis_cfe }
+
+  const { subject, html } = genererEmailConfirmation(simAvecAvis)
   const attachments: Array<{ filename: string; content: string }> = []
 
   try {
-    const pdfBuffer = await genererPDFFormulaire(sim)
+    const pdfBuffer = await genererPDFFormulaire(simAvecAvis)
     const formName = sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'
     attachments.push({
       filename: `${formName}_prefilled_${sim.nom.replace(/\s/g, '_')}_CFE${sim.annee_cfe}.pdf`,
@@ -38,8 +63,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await genererFacture(sim)
-    const factureBuffer = await genererFacture(sim)
+    const factureBuffer = await genererFacture(simAvecAvis)
     attachments.push({
       filename: `Facture_RembourseCFE_${sim.nom.replace(/\s/g, '_')}_${sim.annee_cfe}.pdf`,
       content: factureBuffer.toString('base64'),
