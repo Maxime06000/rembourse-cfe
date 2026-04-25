@@ -62,7 +62,7 @@ Par la présente, je formule une réclamation conformément aux dispositions de 
 ${paragrapheMulti}
 Je joins à cette réclamation :
   - ${pieceJointe}
-  - Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} dûment complété et signé${sim.avis_cfe && sim.avis_cfe.length > 3 ? '\n  - L\'annexe récapitulative de mes établissements (format Word)' : ''}
+  - Le formulaire ${sim.regime === 'reel' ? 'n° 1327-CET-SD (Cerfa 14108)' : 'n° 1327-S-CET-SD (Cerfa 14109)'} — demande de plafonnement CFE en fonction de la valeur ajoutée — dûment complété et signé (ci-joint en PDF)${sim.avis_cfe && sim.avis_cfe.length > 3 ? '\n  - L\'annexe récapitulative de mes établissements (ci-jointe au format Word)' : ''}
 
 Je vous prie d'agréer, Madame, Monsieur, l'expression de mes respectueuses salutations.
 
