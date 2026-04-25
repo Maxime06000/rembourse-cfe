@@ -225,25 +225,30 @@ function fillMicroForm(
     fill(form, 'b7', '0')
   }
   
-  fill(form, 'b26', r(totalCfe))  // Total CFE (ligne 1 TOTAUX)
+  // ── Tous les calculs sont dans des champs "b" malgré l'apparence visuelle ──
+  // Mapping basé sur l'analyse du fichier correct 2024
   
-  // ── SECTION C — Détermination VA ──
-  fill(form, 'c4', r(recettes))   // Ligne 4: Recettes totales
-  fill(form, 'c7', r(va))          // Ligne 7: VA produite
+  fill(form, 'b26', r(totalCfe))  // Section B Ligne 1 TOTAUX
   
-  // ── SECTION D — Plafonnement ──
-  fill(form, 'd8', r(sim.plafonnement))  // Ligne 8: Plafonnement (Recettes × 80% × taux)
+  // Section C — Détermination VA
+  fill(form, 'b27', r(recettes))           // Ligne 4: RECETTES TOTALES
+  fill(form, 'b32', r(recettes))           // Ligne 7: VA produite (= recettes en micro)
   
-  // ── SECTION E — Dégrèvement demandé ──
+  // Section D — Plafonnement
+  fill(form, 'b33', r(sim.plafonnement))   // Ligne 8: Plafonnement (recettes × 80% × taux)
+  
+  // Section E — Dégrèvement demandé (Ligne 9 = 3 cases : CFE - Plafonnement = Différence)
   const degrevementBrut = Math.max(0, totalCfe - sim.plafonnement)
-  fill(form, 'e9', r(degrevementBrut))  // Ligne 9: CFE - Plafonnement
+  fill(form, 'b34', r(totalCfe))           // Ligne 9 gauche: CFE (= Ligne 3)
+  fill(form, 'b35', r(sim.plafonnement))   // Ligne 9 milieu: Plafonnement (= Ligne 8)
+  fill(form, 'b36', r(degrevementBrut))    // Ligne 9 droite: Différence
   
-  // ── SECTION F — Limitation ──
-  fill(form, 'f10', r(cotisationMin))    // Ligne 10: Cotisation minimum
+  // Section F — Limitation
+  fill(form, 'b37', r(cotisationMin))      // Ligne 10: Cotisation minimum
   const maxDeg = Math.max(0, totalCfe - cotisationMin)
-  fill(form, 'f11', r(maxDeg))           // Ligne 11: CFE - Cotis min
+  fill(form, 'b38', r(maxDeg))             // Ligne 11: CFE - Cotis min
   
-  // Ligne 13: Dégrèvement final (assujetti cotis min)
+  // Ligne 13: Dégrèvement final (entreprise assujettie cotis min - cas LMNP)
   const degrevementFinal = Math.min(degrevementBrut, maxDeg)
-  fill(form, 'f13', r(degrevementFinal))
+  fill(form, 'b39', r(degrevementFinal))
 }
