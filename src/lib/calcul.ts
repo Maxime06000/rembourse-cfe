@@ -11,6 +11,18 @@ export const TAUX_PLAFONNEMENT: Record<number, number> = {
 }
 const TAUX_DEFAULT = 1.25 // 2030+
 
+/**
+ * Calcule le tarif fixe selon les paliers :
+ * - 39€ : CFE < 500€
+ * - 59€ : CFE 500-1500€
+ * - 99€ : CFE > 1500€ ou multi-CFE
+ */
+export function calculerTarif(totalCfe: number, isMulti: boolean): number {
+  if (isMulti || totalCfe > 1500) return 99
+  if (totalCfe >= 500) return 59
+  return 39
+}
+
 export type Regime = 'reel' | 'micro'
 
 export interface DonneesReel {
@@ -93,8 +105,9 @@ export function calculerDegrevement(params: {
   cfeLigne25: number
   cfeLigne189: number
   anneeCfe: number
+  isMulti?: boolean
 }): ResultatSimulation {
-  const { regime, donnees, cfeLigne25, cfeLigne189, anneeCfe } = params
+  const { regime, donnees, cfeLigne25, cfeLigne189, anneeCfe, isMulti = false } = params
 
   const taux = TAUX_PLAFONNEMENT[anneeCfe] ?? TAUX_DEFAULT
   const ca =
@@ -115,7 +128,7 @@ export function calculerDegrevement(params: {
   const plancher = Math.round(cfeLigne25 - cfeLigne189)
   const degrevementReel = Math.max(0, Math.min(degrevementTheorique, plancher))
 
-  const commission = Math.round(degrevementReel * 0.2)
+  const commission = calculerTarif(cfeLigne25, isMulti)
   const gainNet = degrevementReel - commission
 
   return {
@@ -171,6 +184,7 @@ export function calculerDegrevementMultiCFE(params: {
     cfeLigne25: totalCfe,
     cfeLigne189: cotisationMin,
     anneeCfe,
+    isMulti: true,
   })
 }
 

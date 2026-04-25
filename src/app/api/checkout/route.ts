@@ -5,9 +5,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03
 
 export async function POST(req: NextRequest) {
   try {
-    const { simulationId, commission, degrevementReel, email, nom, anneeCfe } = await req.json()
+            const { simulationId, commission, degrevementReel, email, nom, anneeCfe, isMulti } = await req.json()
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+
+    const palier = isMulti || degrevementReel > 1500 ? 'multi-établissements ou CFE > 1 500 €'
+      : commission === 59 ? 'CFE 500 – 1 500 €'
+      : 'CFE < 500 €'
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -18,9 +22,9 @@ export async function POST(req: NextRequest) {
             currency: 'eur',
             product_data: {
               name: `Dossier de dégrèvement CFE ${anneeCfe}`,
-              description: `Commission de 20% sur dégrèvement estimé de ${degrevementReel.toLocaleString('fr-FR')} €. Formulaire 1327-CET-SD pré-rempli + mail SIE.`,
+              description: `Frais de service (${palier}). Formulaire 1327-CET-SD pré-rempli + mail SIE. Dégrèvement estimé : ${degrevementReel.toLocaleString('fr-FR')} €.`,
             },
-            unit_amount: Math.round(commission * 100), // Stripe uses cents
+            unit_amount: Math.round(commission * 100),
           },
           quantity: 1,
         },

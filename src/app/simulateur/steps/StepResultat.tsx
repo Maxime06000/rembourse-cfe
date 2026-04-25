@@ -13,6 +13,7 @@ export function StepResultat() {
   const { resultat, anneeCfe, avisCfe, cfeLigne25, cfeLigne189, regime } = store
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false)
 
   if (!resultat) return null
 
@@ -160,27 +161,47 @@ export function StepResultat() {
         ))}
       </div>
 
-      {/* Commission and gain */}
+      {/* Tarif fixe */}
       <div className="space-y-2">
         <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4">
           <div>
-            <p className="text-sm text-gray-600">Commission (20% du dégrèvement)</p>
-            <p className="text-xs text-gray-400">Payable maintenant pour obtenir vos documents</p>
+            <p className="text-sm text-gray-600">Frais de service</p>
+            <p className="text-xs text-gray-400">
+              {avisCfe.length > 1 ? 'Multi-établissements' : totalCfe > 1500 ? 'CFE > 1 500 €' : totalCfe >= 500 ? 'CFE 500 – 1 500 €' : 'CFE < 500 €'}
+            </p>
           </div>
           <span className="text-lg font-semibold text-gray-800">{fmt(resultat.commission)}</span>
         </div>
         <div className="flex justify-between items-center bg-green-50 border border-green-200 rounded-lg p-4">
           <div>
             <p className="text-sm font-medium text-green-800">Votre gain net estimé</p>
-            <p className="text-xs text-green-600">Après déduction de la commission</p>
+            <p className="text-xs text-green-600">Après déduction des frais</p>
           </div>
           <span className="text-xl font-bold text-green-800">{fmt(resultat.gainNet)}</span>
         </div>
       </div>
 
-      {/* Legal disclaimer */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
-        Le montant affiché est une simulation basée sur vos données déclarées. L'administration fiscale reste seule compétente pour statuer. Aucun remboursement après téléchargement des documents.
+      {/* Disclaimer avec case à cocher */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p className="text-xs text-amber-800 font-medium mb-2">⚠️ Information importante</p>
+        <p className="text-xs text-amber-700 mb-3">
+          RembourseCFE est un service d&apos;aide à la rédaction de votre demande de plafonnement CFE.
+          Nous ne sommes ni experts-comptables ni avocats fiscalistes. Le document généré est basé
+          exclusivement sur les informations que vous avez saisies. L&apos;acceptation de votre demande
+          dépend de l&apos;exactitude de vos chiffres et de l&apos;appréciation de l&apos;administration fiscale.{' '}
+          <strong>Le paiement du service ne garantit pas l&apos;obtention du dégrèvement.</strong>
+        </p>
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={disclaimerAccepted}
+            onChange={e => setDisclaimerAccepted(e.target.checked)}
+            className="mt-0.5 accent-amber-600"
+          />
+          <span className="text-xs text-amber-800 font-medium">
+            J&apos;ai lu et j&apos;accepte ces conditions. Je certifie l&apos;exactitude des données saisies.
+          </span>
+        </label>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -188,7 +209,7 @@ export function StepResultat() {
       {/* CTA */}
       <button
         onClick={handlePaiement}
-        disabled={loading}
+        disabled={loading || !disclaimerAccepted}
         className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-base disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? 'Redirection...' : `Payer ${fmt(resultat.commission)} et obtenir mon dossier →`}
