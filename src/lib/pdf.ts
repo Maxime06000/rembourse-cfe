@@ -229,8 +229,6 @@ function fillMicroForm(
   
   // ── SECTION C — Détermination VA ──
   fill(form, 'c4', r(recettes))   // Ligne 4: Recettes totales
-  fill(form, 'c5', '0')            // Ligne 5: Achats
-  fill(form, 'c6', '0')            // Ligne 6: Rétrocessions
   fill(form, 'c7', r(va))          // Ligne 7: VA produite
   
   // ── SECTION D — Plafonnement ──
@@ -238,9 +236,7 @@ function fillMicroForm(
   
   // ── SECTION E — Dégrèvement demandé ──
   const degrevementBrut = Math.max(0, totalCfe - sim.plafonnement)
-  fill(form, 'e9a', r(totalCfe))         // Ligne 9 gauche: CFE
-  fill(form, 'e9b', r(sim.plafonnement)) // Ligne 9 milieu: Plafonnement
-  fill(form, 'e9c', r(degrevementBrut))  // Ligne 9 droite: Différence
+  fill(form, 'e9', r(degrevementBrut))  // Ligne 9: CFE - Plafonnement
   
   // ── SECTION F — Limitation ──
   fill(form, 'f10', r(cotisationMin))    // Ligne 10: Cotisation minimum
