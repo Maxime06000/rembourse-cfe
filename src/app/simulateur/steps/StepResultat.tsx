@@ -14,6 +14,11 @@ export function StepResultat() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false)
+  const [cgvAccepted, setCgvAccepted] = useState(false)
+  const [retractationWaived, setRetractationWaived] = useState(false)
+
+  const CGV_VERSION = 'v1.0 – avril 2026'
+  const allAccepted = disclaimerAccepted && cgvAccepted && retractationWaived
 
   if (!resultat) return null
 
@@ -73,6 +78,11 @@ export function StepResultat() {
           degrevementTheorique: resultat!.degrevementTheorique,
           degrevementReel: resultat!.degrevementReel,
           commission: resultat!.commission,
+          // Acceptations légales (preuve horodatée)
+          cgvAcceptedAt: new Date().toISOString(),
+          cgvVersion: CGV_VERSION,
+          retractationWaivedAt: new Date().toISOString(),
+          disclaimerAcceptedAt: new Date().toISOString(),
         }),
       })
 
@@ -179,25 +189,41 @@ export function StepResultat() {
         </div>
       </div>
 
-      {/* Disclaimer avec case à cocher */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-xs text-amber-800 font-medium mb-2">⚠️ Information importante</p>
-        <p className="text-xs text-amber-700 mb-3">
-          RembourseCFE est un service d&apos;aide à la rédaction de votre demande de plafonnement CFE.
-          Nous ne sommes ni experts-comptables ni avocats fiscalistes. Le document généré est basé
-          exclusivement sur les informations que vous avez saisies. L&apos;acceptation de votre demande
-          dépend de l&apos;exactitude de vos chiffres et de l&apos;appréciation de l&apos;administration fiscale.{' '}
-          <strong>Le paiement du service ne garantit pas l&apos;obtention du dégrèvement.</strong>
+      {/* Acceptations légales */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+        <p className="text-xs text-amber-800 font-semibold">⚠️ Informations importantes — à lire avant de payer</p>
+        <p className="text-xs text-amber-700">
+          RembourseCFE est un service d&apos;aide à la rédaction. Nous ne sommes ni experts-comptables ni avocats fiscalistes.
+          Le document est généré à partir de vos données.{' '}
+          <strong>Le paiement ne garantit pas l&apos;obtention du dégrèvement.</strong>
         </p>
+
+        {/* Case 1 : Disclaimer */}
         <label className="flex items-start gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={disclaimerAccepted}
-            onChange={e => setDisclaimerAccepted(e.target.checked)}
-            className="mt-0.5 accent-amber-600"
-          />
-          <span className="text-xs text-amber-800 font-medium">
-            J&apos;ai lu et j&apos;accepte ces conditions. Je certifie l&apos;exactitude des données saisies.
+          <input type="checkbox" checked={disclaimerAccepted} onChange={e => setDisclaimerAccepted(e.target.checked)} className="mt-0.5 accent-amber-600" />
+          <span className="text-xs text-amber-800">
+            Je certifie l&apos;exactitude des données saisies et comprends que toute erreur rend la réclamation caduque.
+          </span>
+        </label>
+
+        {/* Case 2 : CGV */}
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" checked={cgvAccepted} onChange={e => setCgvAccepted(e.target.checked)} className="mt-0.5 accent-amber-600" />
+          <span className="text-xs text-amber-800">
+            J&apos;ai lu et j&apos;accepte les{' '}
+            <a href="/cgv" target="_blank" className="underline font-medium">Conditions Générales de Vente</a>
+            {' '}({CGV_VERSION}).
+          </span>
+        </label>
+
+        {/* Case 3 : Renonciation rétractation */}
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" checked={retractationWaived} onChange={e => setRetractationWaived(e.target.checked)} className="mt-0.5 accent-amber-600" />
+          <span className="text-xs text-amber-800">
+            Je reconnais que le service consiste en la fourniture immédiate d&apos;un contenu numérique (PDF + email)
+            et renonce expressément à mon{' '}
+            <strong>droit de rétractation de 14 jours</strong>{' '}
+            (art. L.221-28 12° du Code de la consommation).
           </span>
         </label>
       </div>
@@ -207,7 +233,7 @@ export function StepResultat() {
       {/* CTA */}
       <button
         onClick={handlePaiement}
-        disabled={loading || !disclaimerAccepted}
+        disabled={loading || !allAccepted}
         className="w-full bg-blue-600 text-white py-3.5 rounded-lg font-medium hover:bg-blue-700 transition-colors text-base disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? 'Redirection...' : `Payer ${fmt(resultat.commission)} et obtenir mon dossier →`}

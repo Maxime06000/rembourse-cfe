@@ -21,10 +21,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </nav>
         <main className="min-h-screen bg-gray-50">{children}</main>
         <footer className="border-t border-gray-100 bg-white mt-16">
-          <div className="max-w-4xl mx-auto px-4 py-8 text-xs text-gray-400 space-y-1">
+          <div className="max-w-4xl mx-auto px-4 py-8 text-xs text-gray-400 space-y-2">
             <p>RembourseCFE est un outil d'aide à la rédaction. Il ne constitue pas un conseil fiscal ou juridique.</p>
             <p>Les simulations sont des estimations. L'administration fiscale reste seule compétente pour statuer.</p>
-            <p className="pt-2">© {new Date().getFullYear()} RembourseCFE</p>
+            <div className="flex gap-4 pt-2">
+              <a href="/cgv" className="hover:text-gray-600 underline">CGV</a>
+              <a href="/mentions-legales" className="hover:text-gray-600 underline">Mentions légales</a>
+              <a href="mailto:maxime.lescouzeres@gmail.com" className="hover:text-gray-600 underline">Contact</a>
+            </div>
+            <p className="pt-1">© {new Date().getFullYear()} RembourseCFE</p>
           </div>
         </footer>
       </body>

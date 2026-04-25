@@ -38,6 +38,10 @@ export async function POST(req: NextRequest) {
         degrevement_theorique: body.degrevementTheorique,
         degrevement_reel: body.degrevementReel,
         commission: body.commission,
+        cgv_accepted_at: body.cgvAcceptedAt,
+        cgv_version: body.cgvVersion,
+        retractation_waived_at: body.retractationWaivedAt,
+        disclaimer_accepted_at: body.disclaimerAcceptedAt,
         stripe_payment_status: 'pending',
       }])
       .select('id')
