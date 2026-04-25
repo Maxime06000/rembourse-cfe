@@ -35,6 +35,16 @@ export function genererMailSIE(sim: SimulationData): string {
   - Recettes annuelles brutes : ${fmt(sim.recettes_brutes ?? 0)}
   - Valeur ajoutée retenue (80% des recettes) : ${fmt(sim.valeur_ajoutee)}`
 
+  const isMulti = sim.avis_cfe && sim.avis_cfe.length > 1
+  const principal = sim.avis_cfe?.find(a => a.estPrincipal)
+  const listeSirets = sim.avis_cfe?.map(a => a.siret).join(', ')
+
+  const paragrapheMulti = isMulti ? `\nCette demande concerne l'ensemble de mes établissements (SIRET : ${listeSirets}), dont l'établissement principal est situé à ${sim.adresse_bien}, ${sim.ville}, SIRET ${principal?.siret ?? sim.siret}.\n` : ''
+
+  const pieceJointe = isMulti
+    ? `Les copies de mes ${sim.avis_cfe!.length} avis d'imposition CFE ${sim.annee_cfe} (un par établissement)`
+    : `La copie de mon avis d'imposition CFE ${sim.annee_cfe}`
+
   return `Objet : Réclamation — Demande de plafonnement CFE en fonction de la valeur ajoutée — Exercice ${sim.annee_cfe}
 
 À l'attention du Service des Impôts des Entreprises,
@@ -49,9 +59,9 @@ ${sim.telephone ? `Tél : ${sim.telephone} | ` : ''}Email : ${sim.email}
 Madame, Monsieur,
 
 Par la présente, je formule une réclamation conformément aux dispositions de l'article 1647 B sexies du Code général des impôts, afin de solliciter le plafonnement de ma Cotisation Foncière des Entreprises (CFE) en fonction de la valeur ajoutée produite par mon activité au cours de l'exercice ${sim.annee_cfe}.
-
+${paragrapheMulti}
 Je joins à cette réclamation :
-  - ${sim.avis_cfe && sim.avis_cfe.length > 1 ? `Les copies de mes ${sim.avis_cfe.length} avis d'imposition CFE ${sim.annee_cfe}` : `La copie de mon avis d'imposition CFE ${sim.annee_cfe}`}
+  - ${pieceJointe}
   - Le formulaire ${sim.regime === 'reel' ? '1327-CET-SD' : '1327-S-CET-SD'} dûment complété et signé${sim.avis_cfe && sim.avis_cfe.length > 3 ? '\n  - L\'annexe récapitulative de mes établissements (format Word)' : ''}
 
 Je vous prie d'agréer, Madame, Monsieur, l'expression de mes respectueuses salutations.
