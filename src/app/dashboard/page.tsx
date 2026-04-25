@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [simulations, setSimulations] = useState<Simulation[]>([])
   const [loading, setLoading] = useState(false)
   const [resending, setResending] = useState<string | null>(null)
+  const [sendingToAdmin, setSendingToAdmin] = useState<string | null>(null)
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all')
 
   async function loadSimulations() {
@@ -67,6 +68,22 @@ export default function Dashboard() {
       alert('Erreur réseau')
     }
     setResending(null)
+  }
+
+  async function handleSendToAdmin(sim: Simulation) {
+    setSendingToAdmin(sim.id)
+    try {
+      const res = await fetch('/api/resend-documents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ simulationId: sim.id, token: ADMIN_TOKEN, overrideEmail: 'maxime.lescouzeres@gmail.com' }),
+      })
+      if (res.ok) alert(`Documents envoyés sur maxime.lescouzeres@gmail.com`)
+      else alert('Erreur lors de l\'envoi')
+    } catch {
+      alert('Erreur réseau')
+    }
+    setSendingToAdmin(null)
   }
 
   const filtered = simulations.filter(s => {
@@ -155,7 +172,7 @@ export default function Dashboard() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    {['Date', 'Nom', 'Email', 'CFE', 'Dégrèvement', 'Commission', 'Régime', 'Statut', 'Actions'].map(h => (
+                    {['ID', 'Date', 'Nom', 'Email', 'CFE', 'Dégrèvement', 'Commission', 'Régime', 'Statut', 'Actions'].map(h => (
                       <th key={h} className="text-left text-xs font-medium text-gray-500 px-4 py-3">{h}</th>
                     ))}
                   </tr>
@@ -163,6 +180,9 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-gray-100">
                   {filtered.map(sim => (
                     <tr key={sim.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-mono text-xs text-gray-400" title={sim.id}>
+                        {sim.id.slice(0, 8)}…
+                      </td>
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
                         {new Date(sim.created_at).toLocaleDateString('fr-FR')}
                       </td>
@@ -185,13 +205,22 @@ export default function Dashboard() {
                       </td>
                       <td className="px-4 py-3">
                         {sim.stripe_payment_status === 'paid' && (
-                          <button
-                            onClick={() => handleResend(sim)}
-                            disabled={resending === sim.id}
-                            className="text-xs text-blue-600 hover:text-blue-700 border border-blue-200 rounded px-2 py-1 disabled:opacity-50"
-                          >
-                            {resending === sim.id ? '...' : '↗ Renvoyer'}
-                          </button>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleResend(sim)}
+                              disabled={resending === sim.id}
+                              className="text-xs text-blue-600 hover:text-blue-700 border border-blue-200 rounded px-2 py-1 disabled:opacity-50"
+                            >
+                              {resending === sim.id ? '...' : '↗ Renvoyer'}
+                            </button>
+                            <button
+                              onClick={() => handleSendToAdmin(sim)}
+                              disabled={sendingToAdmin === sim.id}
+                              className="text-xs text-purple-600 hover:text-purple-700 border border-purple-200 rounded px-2 py-1 disabled:opacity-50"
+                            >
+                              {sendingToAdmin === sim.id ? '...' : '📩 M\'envoyer'}
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>

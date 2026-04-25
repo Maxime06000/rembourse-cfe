@@ -28,7 +28,7 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
         {[
           { n: '1', title: 'Je simule', desc: 'Je saisis mes données LMNP. Le simulateur calcule instantanément mon dégrèvement potentiel.' },
-          { n: '2', title: 'Je paie', desc: "Si dégrèvement trouvé, je règle 20% du montant estimé pour obtenir mon dossier complet." },
+          { n: '2', title: 'Je paie', desc: "Si dégrèvement trouvé, je règle la commission sur le montant estimé pour obtenir mon dossier complet." },
           { n: '3', title: 'J\'envoie', desc: "Je reçois le mail pré-rédigé et le formulaire à envoyer à mon Service des Impôts." },
         ].map(s => (
           <div key={s.n} className="bg-white rounded-xl border border-gray-100 p-6">

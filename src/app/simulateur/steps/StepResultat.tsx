@@ -161,14 +161,12 @@ export function StepResultat() {
         ))}
       </div>
 
-      {/* Tarif fixe */}
+      {/* Commission */}
       <div className="space-y-2">
         <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4">
           <div>
-            <p className="text-sm text-gray-600">Frais de service</p>
-            <p className="text-xs text-gray-400">
-              {avisCfe.length > 1 ? 'Multi-établissements' : totalCfe > 1500 ? 'CFE > 1 500 €' : totalCfe >= 500 ? 'CFE 500 – 1 500 €' : 'CFE < 500 €'}
-            </p>
+            <p className="text-sm text-gray-600">Commission (20% du dégrèvement)</p>
+            <p className="text-xs text-gray-400">Bornée entre 39 € et 99 €</p>
           </div>
           <span className="text-lg font-semibold text-gray-800">{fmt(resultat.commission)}</span>
         </div>

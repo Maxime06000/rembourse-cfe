@@ -9,7 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY!)
 const ADMIN_TOKEN = process.env.NEXT_PUBLIC_DASHBOARD_TOKEN || 'rembourse2026'
 
 export async function POST(req: NextRequest) {
-  const { simulationId, token } = await req.json()
+  const { simulationId, token, overrideEmail } = await req.json()
 
   if (token !== ADMIN_TOKEN) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -48,11 +48,14 @@ export async function POST(req: NextRequest) {
     console.warn('Facture skipped:', err)
   }
 
+  const destinataire = overrideEmail ?? sim.email
+  const prefixSujet = overrideEmail ? '[ADMIN] ' : '[RENVOI] '
+
   await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
-    to: sim.email,
+    to: destinataire,
     replyTo: 'rembourse-cfe@gmail.com',
-    subject: `[RENVOI] ${subject}`,
+    subject: `${prefixSujet}${subject}`,
     html,
     attachments,
   })
