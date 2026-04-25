@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { genererEmailConfirmation } from '@/lib/mail'
 import { genererPDFFormulaire } from '@/lib/pdf'
 import { genererFacture } from '@/lib/facture'
+import { genererAnnexeCFE } from '@/lib/annexe-cfe'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
@@ -70,6 +71,23 @@ export async function POST(req: NextRequest) {
     })
   } catch (err) {
     console.warn('Facture skipped:', err)
+  }
+
+  // Annexe multi-CFE (si > 3 établissements)
+  if (avis_cfe.length > 3) {
+    try {
+      const annexeBuffer = await genererAnnexeCFE({
+        avisCfe: avis_cfe,
+        nomRedevable: sim.nom,
+        anneeCfe: sim.annee_cfe,
+      })
+      attachments.push({
+        filename: `Annexe_CFE_${sim.nom.replace(/\s/g, '_')}_${sim.annee_cfe}.docx`,
+        content: annexeBuffer.toString('base64'),
+      })
+    } catch (err) {
+      console.warn('Annexe CFE skipped:', err)
+    }
   }
 
   const destinataire = overrideEmail ?? sim.email
