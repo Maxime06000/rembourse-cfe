@@ -25,11 +25,13 @@ export async function POST(req: NextRequest) {
   if (!sim) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   // Récupérer les avis CFE liés (multi-établissements)
-  const { data: avisCfeRows } = await supabaseAdmin
+  const { data: avisCfeRows, error: avisCfeError } = await supabaseAdmin
     .from('avis_cfe')
     .select('*')
     .eq('simulation_id', simulationId)
     .order('est_principal', { ascending: false })
+
+  console.log(`[resend-documents] simulationId=${simulationId} avisCfeRows=${avisCfeRows?.length ?? 0} error=${avisCfeError?.message ?? 'none'}`)
 
   // Mapper vers le format attendu par pdf.ts
   const avis_cfe = (avisCfeRows ?? []).map(a => ({
@@ -75,6 +77,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Annexe multi-CFE (si > 3 établissements)
+  console.log(`[resend-documents] avis_cfe.length=${avis_cfe.length} → annexe=${avis_cfe.length > 3}`)
   if (avis_cfe.length > 3) {
     try {
       const annexeBuffer = await genererAnnexeCFE({
@@ -92,6 +95,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  console.log(`[resend-documents] attachments=${attachments.map(a => a.filename).join(', ')}`)
   const destinataire = overrideEmail ?? sim.email
   const prefixSujet = overrideEmail ? '[ADMIN] ' : '[RENVOI] '
 
