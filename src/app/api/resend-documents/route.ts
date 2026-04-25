@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
 
   // Mapper vers le format attendu par pdf.ts
   const avis_cfe = (avisCfeRows ?? []).map(a => ({
+    id: a.id,
     montantCfe: a.montant_cfe,
     cotisationMin: a.cotisation_min,
     ligne9: a.ligne9,
@@ -86,7 +87,8 @@ export async function POST(req: NextRequest) {
         content: annexeBuffer.toString('base64'),
       })
     } catch (err) {
-      console.warn('Annexe CFE skipped:', err)
+      console.error('Annexe CFE error:', err)
+      // Ne pas bloquer l'envoi, mais logger l'erreur complète
     }
   }
 
