@@ -53,7 +53,55 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">4. Prix et facturation</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">4. Délais de traitement administratif</h2>
+          <p className="text-gray-600">
+            L&apos;Éditeur ne dispose d&apos;aucun contrôle sur les délais de traitement des Services des Impôts
+            des Entreprises (SIE). Un retard ou une absence de réponse de l&apos;administration ne peut en aucun
+            cas justifier un remboursement de la prestation RembourseCFE.
+          </p>
+          <p className="text-gray-600 mt-2">
+            À titre indicatif, l&apos;administration fiscale dispose d&apos;un délai légal pouvant aller jusqu&apos;à
+            6 mois pour statuer sur une réclamation contentieuse (art. R.* 198-10 du LPF).
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">5. Modification de la réglementation</h2>
+          <p className="text-gray-600">
+            L&apos;outil est mis à jour selon la réglementation fiscale connue au jour de la génération du document.
+            L&apos;Éditeur ne saurait être tenu responsable des conséquences d&apos;une modification législative
+            ou réglementaire rétroactive ou survenant après la date de paiement.
+          </p>
+          <p className="text-gray-600 mt-2">
+            En cas de modification substantielle affectant les calculs (notamment le taux de plafonnement
+            prévu à l&apos;article 1647 B sexies du CGI), l&apos;Éditeur s&apos;engage à mettre à jour l&apos;outil
+            dans les meilleurs délais mais ne peut garantir une rétroactivité sur les dossiers déjà générés.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">6. Exclusion des cas particuliers</h2>
+          <p className="text-gray-600">
+            Le service est destiné aux cas généraux de location meublée non professionnelle (LMNP)
+            et d&apos;entreprises soumises au régime réel ou micro-BIC. Il n&apos;est <strong>pas adapté</strong> aux
+            situations spécifiques suivantes :
+          </p>
+          <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
+            <li>Cessation ou cession d&apos;activité en cours d&apos;année</li>
+            <li>Fusion, absorption ou scission d&apos;entreprise</li>
+            <li>Procédures collectives (redressement, liquidation judiciaire)</li>
+            <li>Pluridétention complexe ou indivision</li>
+            <li>Activités mixtes ou changement de régime fiscal en cours d&apos;année</li>
+          </ul>
+          <p className="text-gray-600 mt-2">
+            Il appartient à l&apos;utilisateur de vérifier auprès d&apos;un professionnel qualifié
+            (expert-comptable ou avocat fiscaliste) si sa situation particulière permet l&apos;application
+            du plafonnement en fonction de la valeur ajoutée.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">7. Prix et facturation</h2>
           <p className="text-gray-600">
             La prestation de RembourseCFE consiste en la <strong>mise à disposition d&apos;un dossier numérique pré-rempli</strong>
             (formulaire fiscal + mail de réclamation). Le prix est une commission calculée à 20 % du dégrèvement estimé,
@@ -69,7 +117,7 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">5. Renonciation au droit de rétractation</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">8. Renonciation au droit de rétractation</h2>
           <p className="text-gray-600">
             Conformément à l&apos;article L.221-28 12° du Code de la consommation, <strong>le droit de rétractation de 14 jours
             ne s&apos;applique pas</strong> aux contenus numériques non fournis sur support matériel dont l&apos;exécution a commencé
@@ -82,7 +130,7 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">6. Responsabilité de l&apos;utilisateur</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">9. Responsabilité de l&apos;utilisateur</h2>
           <p className="text-gray-600">L&apos;utilisateur est seul responsable :</p>
           <ul className="list-disc list-inside text-gray-600 mt-2 space-y-1">
             <li>de l&apos;exactitude des données saisies (CA, charges, montant CFE, SIRET, adresse)</li>
@@ -93,7 +141,7 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">7. Données personnelles</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">10. Données personnelles</h2>
           <p className="text-gray-600">
             Les données collectées (nom, email, SIRET, données fiscales) sont utilisées exclusivement
             pour la génération du dossier et la facturation. Elles sont stockées sur des serveurs sécurisés
@@ -104,7 +152,7 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">8. Litiges</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">11. Litiges</h2>
           <p className="text-gray-600">
             En cas de litige, une solution amiable sera recherchée en priorité. À défaut,
             les tribunaux français sont compétents. Le droit applicable est le droit français.
@@ -116,7 +164,7 @@ export default function CGV() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">9. Modification des CGV</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">12. Modification des CGV</h2>
           <p className="text-gray-600">
             RembourseCFE se réserve le droit de modifier les présentes CGV. La version applicable est celle
             en vigueur au moment du paiement, dont la version et la date d&apos;acceptation sont archivées
