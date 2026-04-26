@@ -80,15 +80,15 @@ export function StepIdentite() {
 
       <div className="grid grid-cols-2 gap-4">
         <Field label="Nom complet" required error={erreurs.nom}>
-          <Input value={nom} onChange={e => setNom(e.target.value)} placeholder="Maxime Lescouzeres" error={!!erreurs.nom} />
+          <Input value={nom} onChange={e => setNom(e.target.value)}  error={!!erreurs.nom} />
         </Field>
         <Field label="Email" required error={erreurs.email}>
-          <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="maxime@email.com" error={!!erreurs.email} />
+          <Input type="email" value={email} onChange={e => setEmail(e.target.value)}  error={!!erreurs.email} />
         </Field>
       </div>
 
       <Field label="Téléphone" hint="Optionnel">
-        <Input type="tel" value={telephone} onChange={e => setTelephone(e.target.value)} placeholder="06 47 69 63 82" />
+        <Input type="tel" value={telephone} onChange={e => setTelephone(e.target.value)}  />
       </Field>
 
       {hasPrincipal ? (
