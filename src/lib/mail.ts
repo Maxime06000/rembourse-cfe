@@ -125,6 +125,14 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
       <p style="margin: 0; font-size: 13px; color: #555;">L'administration dispose de 6 mois pour répondre. En cas d'acceptation, remboursement par virement avec intérêts moratoires.</p>
     </div>
 
+    <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
+      <p style="margin: 0 0 8px; font-weight: 700; font-size: 14px; color: #111;">Étape 5 — Tenez-nous informé 🎉</p>
+      <p style="margin: 0 0 8px; font-size: 13px; color: #555;">Une fois que l'administration fiscale vous a répondu, nous serions ravis de connaître l'issue de votre demande !</p>
+      <p style="margin: 0 0 6px; font-size: 13px; color: #555;">✅ <strong>Dégrèvement obtenu ?</strong> Partagez la bonne nouvelle à <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a> — c'est la meilleure récompense pour nous !</p>
+      <p style="margin: 0 0 8px; font-size: 13px; color: #555;">❌ <strong>Demande refusée ?</strong> Transmettez-nous la réponse du SIE à <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a></p>
+      <p style="margin: 0; font-size: 13px; color: #555;">Merci de votre confiance, et bonne chance pour votre démarche 🍀</p>
+    </div>
+
     <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
       <p style="margin: 0; font-size: 12px; color: #92400e;"><strong>Rappel :</strong> Le montant affiché est une estimation. L'administration fiscale reste seule compétente pour statuer. RembourseCFE est un outil d'aide à la rédaction, pas un conseil fiscal.</p>
     </div>
