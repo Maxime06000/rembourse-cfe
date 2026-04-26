@@ -22,6 +22,7 @@ export default function HomePage() {
           Simuler mon dégrèvement →
         </Link>
         <p className="text-xs text-gray-400 mt-3">Gratuit · Paiement uniquement si dégrèvement trouvé</p>
+        <p className="text-xs text-gray-400 mt-1">Basé sur les règles fiscales en vigueur — plafonnement de la CFE en fonction de la valeur ajoutée (CGI art. 1647 B sexies)</p>
       </div>
 
       {/* How it works */}
