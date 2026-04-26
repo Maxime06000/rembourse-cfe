@@ -101,8 +101,7 @@ export function StepQualification() {
       <Field label="Type de location" required>
         <div className="grid grid-cols-1 gap-3">
           {[
-            { v: 'longue', title: 'Longue durée', sub: 'Bail meublé classique (> 1 mois)', color: 'blue' },
-            { v: 'courte', title: 'Courte durée', sub: 'Airbnb, saisonnier, location à la nuitée', color: 'blue' },
+            { v: 'longue', title: 'Location meublée classique', sub: 'Longue durée (bail > 1 mois) ou courte durée saisonnière / Airbnb — sans services hôteliers', color: 'blue' },
             { v: 'courte_para', title: 'Courte durée — para-hôtellerie', sub: 'Vous fournissez au moins 3 services parmi : petit-déjeuner, ménage en cours de séjour, linge de maison, accueil', color: 'amber' },
           ].map(t => (
             <label key={t.v} className={`flex items-start gap-3 border rounded-lg p-3 cursor-pointer transition-colors ${
