@@ -10,7 +10,7 @@ export default function MentionsLegales() {
           <div className="text-gray-600 space-y-1">
             <p><strong>RembourseCFE</strong></p>
             <p>Maxime Lescouzères, auto-entrepreneur</p>
-            <p>Email : <a href="mailto:maxime.lescouzeres@gmail.com" className="text-blue-600">maxime.lescouzeres@gmail.com</a></p>
+            <p>Email : <a href="mailto:rembourse.cfe@gmail.com" className="text-blue-600">rembourse.cfe@gmail.com</a></p>
           </div>
         </section>
 
@@ -45,7 +45,7 @@ export default function MentionsLegales() {
               <strong>Vos droits :</strong> conformément au RGPD et à la loi Informatique et Libertés,
               vous disposez d&apos;un droit d&apos;accès, de rectification, d&apos;effacement et de portabilité de vos données,
               ainsi que d&apos;un droit d&apos;opposition au traitement. Pour exercer ces droits :
-              <a href="mailto:maxime.lescouzeres@gmail.com" className="text-blue-600 ml-1">maxime.lescouzeres@gmail.com</a>
+              <a href="mailto:rembourse.cfe@gmail.com" className="text-blue-600 ml-1">rembourse.cfe@gmail.com</a>
             </p>
             <p>
               Vous pouvez également introduire une réclamation auprès de la CNIL :

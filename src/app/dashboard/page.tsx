@@ -77,9 +77,9 @@ export default function Dashboard() {
       const res = await fetch('/api/resend-documents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ simulationId: sim.id, token: ADMIN_TOKEN, overrideEmail: 'maxime.lescouzeres@gmail.com' }),
+        body: JSON.stringify({ simulationId: sim.id, token: ADMIN_TOKEN, overrideEmail: 'rembourse.cfe@gmail.com' }),
       })
-      if (res.ok) alert(`Documents envoyés sur maxime.lescouzeres@gmail.com`)
+      if (res.ok) alert(`Documents envoyés sur rembourse.cfe@gmail.com`)
       else alert('Erreur lors de l\'envoi')
     } catch {
       alert('Erreur réseau')

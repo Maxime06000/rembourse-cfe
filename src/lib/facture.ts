@@ -61,7 +61,7 @@ export async function genererFacture(sim: SimulationData): Promise<Buffer> {
   y -= 16
   page.drawText('Service d\'assistance au dégrèvement CFE', { x: 40, y, size: 10, font, color: dark })
   y -= 14
-  page.drawText('rembourse-cfe@gmail.com', { x: 40, y, size: 10, font, color: blue })
+  page.drawText('rembourse.cfe@gmail.com', { x: 40, y, size: 10, font, color: blue })
   y -= 14
   page.drawText('rembourse-cfe-eight.vercel.app', { x: 40, y, size: 10, font, color: blue })
 
@@ -114,7 +114,7 @@ export async function genererFacture(sim: SimulationData): Promise<Buffer> {
   page.drawText('Cette facture est émise suite au paiement confirmé de la commission RembourseCFE.', { x: 40, y, size: 8, font, color: gray })
 
   y -= 20
-  page.drawText('Contact : rembourse-cfe@gmail.com', { x: 40, y, size: 9, font, color: blue })
+  page.drawText('Contact : rembourse.cfe@gmail.com', { x: 40, y, size: 9, font, color: blue })
 
   const pdfBytes = await pdfDoc.save()
   return Buffer.from(pdfBytes)

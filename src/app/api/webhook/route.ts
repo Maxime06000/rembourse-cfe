@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
       to: sim.email,
-      replyTo: 'rembourse-cfe@gmail.com',
+      replyTo: 'rembourse.cfe@gmail.com',
       subject,
       html,
       attachments,

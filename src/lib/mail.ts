@@ -128,8 +128,8 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
     <div style="background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px 20px; margin-bottom: 24px; border-radius: 0 8px 8px 0;">
       <p style="margin: 0 0 8px; font-weight: 700; font-size: 14px; color: #111;">Étape 5 — Tenez-nous informé 🎉</p>
       <p style="margin: 0 0 8px; font-size: 13px; color: #555;">Une fois que l'administration fiscale vous a répondu, nous serions ravis de connaître l'issue de votre demande !</p>
-      <p style="margin: 0 0 6px; font-size: 13px; color: #555;">✅ <strong>Dégrèvement obtenu ?</strong> Partagez la bonne nouvelle à <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a> — c'est la meilleure récompense pour nous !</p>
-      <p style="margin: 0 0 8px; font-size: 13px; color: #555;">❌ <strong>Demande refusée ?</strong> Transmettez-nous la réponse du SIE à <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a></p>
+      <p style="margin: 0 0 6px; font-size: 13px; color: #555;">✅ <strong>Dégrèvement obtenu ?</strong> Partagez la bonne nouvelle à <a href="mailto:rembourse.cfe@gmail.com" style="color: #1d4ed8;">rembourse.cfe@gmail.com</a> — c'est la meilleure récompense pour nous !</p>
+      <p style="margin: 0 0 8px; font-size: 13px; color: #555;">❌ <strong>Demande refusée ?</strong> Transmettez-nous la réponse du SIE à <a href="mailto:rembourse.cfe@gmail.com" style="color: #1d4ed8;">rembourse.cfe@gmail.com</a></p>
       <p style="margin: 0; font-size: 13px; color: #555;">Merci de votre confiance, et bonne chance pour votre démarche 🍀</p>
     </div>
 
@@ -138,7 +138,7 @@ export function genererEmailConfirmation(sim: SimulationData): { subject: string
     </div>
 
     <p style="margin: 0 0 8px; font-size: 12px; color: #374151;">
-      Une question ? Contactez-nous : <a href="mailto:rembourse-cfe@gmail.com" style="color: #1d4ed8;">rembourse-cfe@gmail.com</a>
+      Une question ? Contactez-nous : <a href="mailto:rembourse.cfe@gmail.com" style="color: #1d4ed8;">rembourse.cfe@gmail.com</a>
     </p>
     <p style="font-size: 11px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 16px; margin: 0;">
       © ${new Date().getFullYear()} RembourseCFE — Service d'aide à la réclamation CFE pour LMNP

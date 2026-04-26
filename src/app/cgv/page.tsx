@@ -12,7 +12,7 @@ export default function CGV() {
           <h2 className="text-lg font-semibold text-gray-800 mb-3">1. Éditeur du service</h2>
           <p className="text-gray-600">
             RembourseCFE est édité par Maxime Lescouzères, auto-entrepreneur, dont l&apos;adresse électronique de contact est{' '}
-            <a href="mailto:maxime.lescouzeres@gmail.com" className="text-blue-600">maxime.lescouzeres@gmail.com</a>.
+            <a href="mailto:rembourse.cfe@gmail.com" className="text-blue-600">rembourse.cfe@gmail.com</a>.
           </p>
         </section>
 
@@ -147,7 +147,7 @@ export default function CGV() {
             pour la génération du dossier et la facturation. Elles sont stockées sur des serveurs sécurisés
             (Supabase, hébergement UE) et ne sont pas revendues à des tiers.
             Conformément au RGPD, l&apos;utilisateur dispose d&apos;un droit d&apos;accès, de rectification et de suppression
-            en contactant <a href="mailto:maxime.lescouzeres@gmail.com" className="text-blue-600">maxime.lescouzeres@gmail.com</a>.
+            en contactant <a href="mailto:rembourse.cfe@gmail.com" className="text-blue-600">rembourse.cfe@gmail.com</a>.
           </p>
         </section>
 

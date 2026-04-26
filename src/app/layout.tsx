@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex gap-4 pt-2">
               <a href="/cgv" className="hover:text-gray-600 underline">CGV</a>
               <a href="/mentions-legales" className="hover:text-gray-600 underline">Mentions légales</a>
-              <a href="mailto:maxime.lescouzeres@gmail.com" className="hover:text-gray-600 underline">Contact</a>
+              <a href="mailto:rembourse.cfe@gmail.com" className="hover:text-gray-600 underline">Contact</a>
             </div>
             <p className="pt-1">© {new Date().getFullYear()} RembourseCFE</p>
           </div>
